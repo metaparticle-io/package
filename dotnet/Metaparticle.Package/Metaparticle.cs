@@ -13,9 +13,9 @@ namespace Metaparticle.Package
 {
     public class Metaparticle
     {
-        private MetaparticleConfig config;
+        private Config config;
 
-        public Metaparticle(MetaparticleConfig config) {
+        public Metaparticle(Config config) {
             this.config = config;
         }
 
@@ -100,20 +100,20 @@ namespace Metaparticle.Package
             return info.IndexOf("docker") != -1;
         }
 
-        public static void Run(string[] args, Action<string[]> main)
+        public static void Containerize(string[] args, Action main)
         {
             if (InDockerContainer())
             {
-                main(args);
+                main();
                 return;
             }
-            MetaparticleConfig config = new MetaparticleConfig();
+            Config config = new Config();
             var trace = new StackTrace();
             foreach (object attribute in trace.GetFrame(1).GetMethod().GetCustomAttributes(true))
             {
-                if (attribute is MetaparticleConfig)
+                if (attribute is Config)
                 {
-                    config = (MetaparticleConfig)attribute;
+                    config = (Config)attribute;
                 }
             }
             var mp = new Metaparticle(config);

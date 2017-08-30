@@ -1,7 +1,7 @@
 using System;
 
 namespace Metaparticle.Package {
-    public class MetaparticleConfig : Attribute {
+    public class Config : Attribute {
         public bool Verbose { get; set; }
 
         public string Repository { get; set; }
@@ -10,7 +10,7 @@ namespace Metaparticle.Package {
 
         public string Executor { get; set; }
 
-        public MetaparticleConfig() {
+        public Config() {
             Executor = "docker";
         }
     }

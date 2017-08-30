@@ -1,13 +1,15 @@
 using System;
 using System.Threading;
-using Metaparticle.Package;
+using static Metaparticle.Package.Metaparticle;
 
 
 namespace examples {
 	public class Program {
-        [MetaparticleConfig(Verbose = false)]
-        public static void Main(string[] args) => Metaparticle.Package.Metaparticle.Run(args, (a) =>
+		//[Metaparticle.Runtime.Config(Replicas = 3)]
+        [Metaparticle.Package.Config(Verbose = false)] 
+        public static void Main(string[] args) => Containerize (args, () =>
         {
+			Console.Out.WriteLine(args);
 			int i = 0;
             while (true) {
 				Console.WriteLine("Hello world " + (i++));
