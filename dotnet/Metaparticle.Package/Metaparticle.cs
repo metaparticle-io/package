@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using Mono.Unix;
 using dockerfile;
 using System.Text;
+using static Metaparticle.Package.Util;
 
-namespace MetaparticlePackage
+namespace Metaparticle.Package
 {
     public class Metaparticle
     {
@@ -18,60 +19,13 @@ namespace MetaparticlePackage
             this.config = config;
         }
 
-
-        public void Exec(String file, String args, TextWriter stdout=null, TextWriter stderr=null)
-        {
-            var task = ExecAsync(file, args, stdout, stderr);
-            task.Wait();
-        }
-
-        public string ExecOld(String file, String args, bool verboseOverride=false)
-        {
-            var o = new StringWriter();
-            var e = new StringWriter();
-            var task = ExecAsync(file, args, o, e);
-            task.Wait();
-            var output = o.ToString();
-            var err = e.ToString();
-            if ((config != null && config.Verbose) || verboseOverride)
-            {
-                Console.Write(output);
-                Console.Write(err);
+        private ContainerExecutor getExecutor() {
+            switch (config.Executor) {
+                case "docker":
+                    return new DockerExecutor();
+                default:
+                    return null;
             }
-
-            return output;
-        }
-
-        public static async Task Copy(StreamReader reader, TextWriter writer) {
-            if (reader == null || writer == null) {
-                return;
-            }
-            var read = await reader.ReadLineAsync();
-            while (read != null) {
-                await writer.WriteLineAsync(read);
-                await writer.FlushAsync();
-                read = await reader.ReadLineAsync();
-            }
-        }
-
-        public async Task ExecAsync(String file, String args, TextWriter stdout=null, TextWriter stderr=null)
-        {
-            var startInfo = new ProcessStartInfo(file, args);
-            startInfo.RedirectStandardOutput = true;
-            startInfo.RedirectStandardError = true;
-            var proc = Process.Start(startInfo);
-            var runTask = Task.Run(() => { proc.WaitForExit(); });
-            var outputTask = Copy(proc.StandardOutput, stdout);
-            var errTask = Copy(proc.StandardError, stderr);
-
-            await Task.Run(() => {
-                Task.WaitAll(new []{
-                    runTask,
-                    outputTask,
-                    errTask,
-                });
-            });
-            return;
         }
 
         private static string getArgs(string[] args) {
@@ -129,10 +83,14 @@ namespace MetaparticlePackage
             var info = new UnixDirectoryInfo(dir);
             Exec("docker", string.Format("build -t {0} {1}", imgName, info.FullName), stdout: o, stderr: e);
 
-            var idWriter = new StringWriter();
-            Exec("docker", string.Format("run -d {0}", imgName), stdout: idWriter);
-            var id = idWriter.ToString().Trim();
-            Exec("docker", string.Format("logs -f {0}", id), Console.Out, Console.Error);
+            var exec = getExecutor();
+            var id = exec.Run(imgName);
+
+            Console.CancelKeyPress += delegate {
+                exec.Cancel(id);
+            };
+
+            exec.Logs(id, Console.Out, Console.Error);
         }
 
         public static bool InDockerContainer()
