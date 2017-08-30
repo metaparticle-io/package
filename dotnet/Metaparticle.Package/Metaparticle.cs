@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Mono.Unix;
 using dockerfile;
 using System.Text;
@@ -17,15 +18,21 @@ namespace MetaparticlePackage
             this.config = config;
         }
 
-        public string Exec(String file, String args, bool verboseOverride=false)
+
+        public void Exec(String file, String args, TextWriter stdout=null, TextWriter stderr=null)
         {
-            var startInfo = new ProcessStartInfo(file, args);
-            startInfo.RedirectStandardOutput = true;
-            startInfo.RedirectStandardError = true;
-            var proc = Process.Start(startInfo);
-            string output = proc.StandardOutput.ReadToEnd();
-            string err = proc.StandardError.ReadToEnd();
-            proc.WaitForExit();
+            var task = ExecAsync(file, args, stdout, stderr);
+            task.Wait();
+        }
+
+        public string ExecOld(String file, String args, bool verboseOverride=false)
+        {
+            var o = new StringWriter();
+            var e = new StringWriter();
+            var task = ExecAsync(file, args, o, e);
+            task.Wait();
+            var output = o.ToString();
+            var err = e.ToString();
             if ((config != null && config.Verbose) || verboseOverride)
             {
                 Console.Write(output);
@@ -35,7 +42,42 @@ namespace MetaparticlePackage
             return output;
         }
 
+        public static async Task Copy(StreamReader reader, TextWriter writer) {
+            if (reader == null || writer == null) {
+                return;
+            }
+            var read = await reader.ReadLineAsync();
+            while (read != null) {
+                await writer.WriteLineAsync(read);
+                await writer.FlushAsync();
+                read = await reader.ReadLineAsync();
+            }
+        }
+
+        public async Task ExecAsync(String file, String args, TextWriter stdout=null, TextWriter stderr=null)
+        {
+            var startInfo = new ProcessStartInfo(file, args);
+            startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardError = true;
+            var proc = Process.Start(startInfo);
+            var runTask = Task.Run(() => { proc.WaitForExit(); });
+            var outputTask = Copy(proc.StandardOutput, stdout);
+            var errTask = Copy(proc.StandardError, stderr);
+
+            await Task.Run(() => {
+                Task.WaitAll(new []{
+                    runTask,
+                    outputTask,
+                    errTask,
+                });
+            });
+            return;
+        }
+
         private static string getArgs(string[] args) {
+            if (args == null || args.Length == 0) {
+                return "";
+            }
             var b = new StringBuilder();
             foreach (var arg in args) {
                 b.Append(arg);
@@ -50,10 +92,12 @@ namespace MetaparticlePackage
             var procName = proc.ProcessName;
             string exe = null;
             string dir = null;
+            TextWriter o = config.Verbose ? Console.Out : null;
+            TextWriter e = config.Verbose ? Console.Error : null;
             if (procName == "dotnet")
             {
                 dir = "bin/release/netcoreapp2.0/debian.8-x64/publish";
-                Exec("/opt/dotnet/dotnet", "publish -r debian.8-x64 -c release");
+                Exec("/opt/dotnet/dotnet", "publish -r debian.8-x64 -c release", stdout: o, stderr: e);
                 var dirInfo = new UnixDirectoryInfo(dir);
                 foreach (var file in dirInfo.GetFileSystemEntries())
                 {
@@ -83,12 +127,12 @@ namespace MetaparticlePackage
                 imgName += ":" + config.Version;
             }
             var info = new UnixDirectoryInfo(dir);
-            Exec("docker", string.Format("build -t {0} {1}", imgName, info.FullName));
+            Exec("docker", string.Format("build -t {0} {1}", imgName, info.FullName), stdout: o, stderr: e);
 
-            var id = Exec("docker", string.Format("run -d {0}", imgName));
-            // TODO: support streaming output
-            var output = Exec("docker", string.Format("logs -f {0}", id));
-            Console.Write(output);
+            var idWriter = new StringWriter();
+            Exec("docker", string.Format("run -d {0}", imgName), stdout: idWriter);
+            var id = idWriter.ToString().Trim();
+            Exec("docker", string.Format("logs -f {0}", id), Console.Out, Console.Error);
         }
 
         public static bool InDockerContainer()
