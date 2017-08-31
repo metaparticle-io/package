@@ -5,7 +5,7 @@ using static Metaparticle.Package.Metaparticle;
 
 namespace examples {
 	public class Program {
-		//[Metaparticle.Runtime.Config(Replicas = 3)]
+		[Metaparticle.Runtime.Config(Replicas = 3)]
         [Metaparticle.Package.Config(Verbose = false)] 
         public static void Main(string[] args) => Containerize (args, () =>
         {
