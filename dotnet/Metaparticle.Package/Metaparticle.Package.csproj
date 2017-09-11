@@ -4,6 +4,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0-beta1" />
-    <ProjectReference Include="..\..\..\dotnet-dockerfile\dockerfile\dockerfile.csproj" />
+    <PackageReference Include="Newtonsoft.JSON" Version="10.0.3" />
+    <ProjectReference Include="..\..\..\dotnet-dockerfile\dockerfile\Dockerfile.csproj" />
+    <ProjectReference Include="..\Metaparticle.Runtime\Metaparticle.Runtime.csproj" />
   </ItemGroup>
 </Project>

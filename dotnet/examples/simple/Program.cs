@@ -1,12 +1,12 @@
 using System;
 using System.Threading;
-using static Metaparticle.Package.Metaparticle;
+using static Metaparticle.Package.Driver;
 
 
-namespace examples {
+namespace simple {
 	public class Program {
-		[Metaparticle.Runtime.Config(Replicas = 3)]
-        [Metaparticle.Package.Config(Verbose = false)] 
+        [Metaparticle.Package.Config(Verbose = true,
+			Publish = true, Repository = "brendanburns")] 
         public static void Main(string[] args) => Containerize (args, () =>
         {
 			Console.Out.WriteLine(args);

@@ -11,18 +11,33 @@ using static Metaparticle.Package.Util;
 
 namespace Metaparticle.Package
 {
-    public class Metaparticle
+    public class Driver
     {
         private Config config;
+        private Metaparticle.Runtime.Config runtimeConfig;
 
-        public Metaparticle(Config config) {
+        public Driver(Config config, Metaparticle.Runtime.Config runtimeConfig) {
             this.config = config;
+            this.runtimeConfig = runtimeConfig;
+        }
+
+        private ImageBuilder getBuilder() {
+            switch (config.Builder) {
+                case "docker":
+                    return new DockerBuilder();
+                case "aci":
+                    return new DockerBuilder();
+                default:
+                    return null;
+            }
         }
 
         private ContainerExecutor getExecutor() {
-            switch (config.Executor) {
+            switch (runtimeConfig.Executor) {
                 case "docker":
                     return new DockerExecutor();
+                case "aci":
+                    return new AciExecutor();
                 default:
                     return null;
             }
@@ -47,7 +62,7 @@ namespace Metaparticle.Package
             string exe = null;
             string dir = null;
             TextWriter o = config.Verbose ? Console.Out : null;
-            TextWriter e = config.Verbose ? Console.Error : null;
+            TextWriter e = config.Quiet ? Console.Error : null;
             if (procName == "dotnet")
             {
                 dir = "bin/release/netcoreapp2.0/debian.8-x64/publish";
@@ -55,9 +70,9 @@ namespace Metaparticle.Package
                 var dirInfo = new UnixDirectoryInfo(dir);
                 foreach (var file in dirInfo.GetFileSystemEntries())
                 {
-                    if (file.Name.EndsWith(".pdb"))
+                    if (file.Name.EndsWith(".runtimeconfig.json"))
                     {
-                        exe = file.Name.Substring(0, file.Name.Length - 4);
+                        exe = file.Name.Substring(0, file.Name.Length - ".runtimeconfig.json".Length);
                     }
                 }
             }
@@ -74,17 +89,29 @@ namespace Metaparticle.Package
             instructions.Add(new Instruction("CMD", string.Format("/exe/{0} {1}", exe, getArgs(args))));
 
             var df = new Dockerfile(instructions.ToArray(), new Comment[0]);
-            File.WriteAllText(dir + "/Dockerfile", df.Contents());
+            var dockerfilename = dir + "/Dockerfile";
+            File.WriteAllText(dockerfilename, df.Contents());
+
+            var builder = getBuilder();
 
             string imgName = (string.IsNullOrEmpty(config.Repository) ? exe : config.Repository + "/" + exe);
             if (!string.IsNullOrEmpty(config.Version)) {
                 imgName += ":" + config.Version;
             }
-            var info = new UnixDirectoryInfo(dir);
-            Exec("docker", string.Format("build -t {0} {1}", imgName, info.FullName), stdout: o, stderr: e);
+            if (!builder.Build(dockerfilename, imgName, stdout: o, stderr: e)) {
+                Console.Error.WriteLine("Image build failed.");
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(config.Repository) || config.Publish) {
+                if (!builder.Push(imgName, stdout: o, stderr: e)) {
+                    Console.Error.WriteLine("Image push failed.");
+                    return;
+                }
+            }
 
             var exec = getExecutor();
-            var id = exec.Run(imgName);
+            var id = exec.Run(imgName, runtimeConfig);
 
             Console.CancelKeyPress += delegate {
                 exec.Cancel(id);
@@ -95,6 +122,10 @@ namespace Metaparticle.Package
 
         public static bool InDockerContainer()
         {
+            var inContainer = System.Environment.GetEnvironmentVariable("METAPARTICLE_IN_CONTAINER");
+            if ("true".Equals(inContainer)) {
+                return true;
+            }
             var info = File.ReadAllText("/proc/1/cgroup");
             // This is a little approximate...
             return info.IndexOf("docker") != -1;
@@ -108,15 +139,19 @@ namespace Metaparticle.Package
                 return;
             }
             Config config = new Config();
+            Metaparticle.Runtime.Config runtimeConfig = new Metaparticle.Runtime.Config();
             var trace = new StackTrace();
             foreach (object attribute in trace.GetFrame(1).GetMethod().GetCustomAttributes(true))
             {
                 if (attribute is Config)
                 {
-                    config = (Config)attribute;
+                    config = (Config) attribute;
+                }
+                if (attribute is Metaparticle.Runtime.Config) {
+                    runtimeConfig = (Metaparticle.Runtime.Config) attribute;
                 }
             }
-            var mp = new Metaparticle(config);
+            var mp = new Driver(config, runtimeConfig);
             mp.Build(args);
         }
     }

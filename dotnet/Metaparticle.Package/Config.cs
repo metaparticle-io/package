@@ -4,14 +4,18 @@ namespace Metaparticle.Package {
     public class Config : Attribute {
         public bool Verbose { get; set; }
 
+        public bool Quiet { get; set; }
+
         public string Repository { get; set; }
 
         public string Version { get; set; }
 
-        public string Executor { get; set; }
+        public string Builder { get; set; }
+
+        public bool Publish { get; set; }
 
         public Config() {
-            Executor = "docker";
+            Builder = "docker";
         }
     }
 }
