@@ -13,7 +13,7 @@ namespace web
 {
     public class Program
     {
-		[Metaparticle.Runtime.Config(Ports = new int[] {5000}, Executor = "aci", Public = true)]
+		[Metaparticle.Runtime.Config(Ports = new int[] {5000}, Replicas = 4, Executor = "metaparticle", Public = true)]
         [Metaparticle.Package.Config(Repository = "brendanburns", Publish = true)]
         public static void Main(string[] args) => Containerize(args, () =>
        	{

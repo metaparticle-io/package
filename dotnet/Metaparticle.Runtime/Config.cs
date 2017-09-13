@@ -10,6 +10,7 @@ namespace Metaparticle.Runtime {
 
         public Config() {
             Executor = "docker";
+            Replicas = 1;
         }
     }
 }

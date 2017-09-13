@@ -38,6 +38,8 @@ namespace Metaparticle.Package
                     return new DockerExecutor();
                 case "aci":
                     return new AciExecutor();
+                case "metaparticle":
+                    return new MetaparticleExecutor();
                 default:
                     return null;
             }
