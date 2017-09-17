@@ -15,7 +15,7 @@ namespace web
         {
             app.Run(async (context) =>
             {
-                await context.Response.WriteAsync("Hello World from " + System.Environment.MachineName);
+                await context.Response.WriteAsync("Hello World. Hostname=='" + System.Environment.MachineName + "'\n");
             });
         }
     }

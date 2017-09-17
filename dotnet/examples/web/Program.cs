@@ -13,13 +13,14 @@ namespace web
 {
     public class Program
     {
-		[Metaparticle.Runtime.Config(Ports = new int[] {5000}, Replicas = 4, Executor = "metaparticle", Public = true)]
+        const int port = 8080;
+		[Metaparticle.Runtime.Config(Ports = new int[] {port}, Replicas = 4, Executor = "metaparticle", Public = true)]
         [Metaparticle.Package.Config(Repository = "brendanburns", Publish = true)]
         public static void Main(string[] args) => Containerize(args, () =>
        	{
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-				.UseKestrel(options => { options.Listen(IPAddress.Any, 5000); })
+				.UseKestrel(options => { options.Listen(IPAddress.Any, port); })
                 .Build()
                 .Run();
     	});
