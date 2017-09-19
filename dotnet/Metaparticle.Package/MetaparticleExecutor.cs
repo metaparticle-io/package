@@ -60,7 +60,7 @@ namespace Metaparticle.Package {
         ""public"": true
     }}
 }}";
-            var specFileName = "/tmp/spec.json";
+            var specFileName = Path.Combine(Path.GetTempPath(), "spec.json");
             File.WriteAllText(specFileName, string.Format(spec, name, config.Replicas, image, config.Ports[0]));
 
             HandleErrorExec("/home/bburns/gopath/bin/compiler", string.Format("-f {0}", specFileName));

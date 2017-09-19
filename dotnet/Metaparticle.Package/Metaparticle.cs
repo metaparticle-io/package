@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Mono.Unix;
+//using Mono.Unix;
 using dockerfile;
 using System.Text;
 using static Metaparticle.Package.Util;
@@ -68,10 +68,12 @@ namespace Metaparticle.Package
             if (procName == "dotnet")
             {
                 dir = "bin/release/netcoreapp2.0/debian.8-x64/publish";
-                Exec("/opt/dotnet/dotnet", "publish -r debian.8-x64 -c release", stdout: o, stderr: e);
-                var dirInfo = new UnixDirectoryInfo(dir);
-                foreach (var file in dirInfo.GetFileSystemEntries())
+                Exec("dotnet", "publish -r debian.8-x64 -c release", stdout: o, stderr: e);
+                //var dirInfo = new UnixDirectoryInfo(dir);
+                var files = Directory.GetFiles(dir);
+                foreach (var filePath in files)
                 {
+                    var file = new FileInfo(filePath);
                     if (file.Name.EndsWith(".runtimeconfig.json"))
                     {
                         exe = file.Name.Substring(0, file.Name.Length - ".runtimeconfig.json".Length);
@@ -105,7 +107,7 @@ namespace Metaparticle.Package
                 return;
             }
 
-            if (!string.IsNullOrEmpty(config.Repository) || config.Publish) {
+            if (config.Publish) {
                 if (!builder.Push(imgName, stdout: o, stderr: e)) {
                     Console.Error.WriteLine("Image push failed.");
                     return;
@@ -128,9 +130,14 @@ namespace Metaparticle.Package
             if ("true".Equals(inContainer)) {
                 return true;
             }
-            var info = File.ReadAllText("/proc/1/cgroup");
-            // This is a little approximate...
-            return info.IndexOf("docker") != -1;
+            // This only works on Linux
+            const string cgroupPath = "/proc/1/cgroup";
+            if (File.Exists(cgroupPath)) {
+                var info = File.ReadAllText(cgroupPath);
+                // This is a little approximate...
+                return info.IndexOf("docker") != -1;
+            }
+            return false;
         }
 
         public static void Containerize(string[] args, Action main)
