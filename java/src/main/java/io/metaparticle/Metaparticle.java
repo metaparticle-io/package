@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import io.metaparticle.annotations.Package;
 import io.metaparticle.annotations.Runtime;
@@ -56,6 +57,16 @@ public class Metaparticle {
         }
     }
 
+    public static void writeDockerfile(String className, String projectName) throws IOException {
+        String contents = 
+"FROM openjdk:8-jre-alpine\n" +
+"COPY target/%s-0.1-SNAPSHOT-jar-with-dependencies.jar /main.jar\n" +
+"CMD java -classpath /main.jar %s";
+        byte[] output = 
+            String.format(contents, projectName, className).getBytes();
+        Files.write(Paths.get("Dockerfile"), output);
+    }
+
     public static void Containerize(Runnable fn) {
         if (inDockerContainer()) {
             fn.run();
@@ -88,7 +99,9 @@ public class Metaparticle {
                 OutputStream stdout = p.verbose() ? System.out : null;
                 OutputStream stderr = p.quiet() ? null : System.err;
 
-                //handleErrorExec(new String[] {"mvn", "package"}, System.out, System.err);
+                writeDockerfile(className, "metaparticle-package");
+
+                handleErrorExec(new String[] {"mvn", "package"}, System.out, System.err);
 
                 builder.build(".", image, stdout, stderr);
 
@@ -99,7 +112,7 @@ public class Metaparticle {
                 exec.run(image, name, r, stdout, stderr);
                 exec.logs(name, System.out, System.err);
                 cancel.run();
-            } catch (NoSuchMethodException | ClassNotFoundException ex) {
+            } catch (NoSuchMethodException | ClassNotFoundException | IOException ex) {
                 // This should really never happen.
                 throw new IllegalStateException(ex);
             }
