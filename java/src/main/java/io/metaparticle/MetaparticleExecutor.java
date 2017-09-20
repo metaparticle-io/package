@@ -21,37 +21,38 @@ public class MetaparticleExecutor implements Executor {
     }
 
     public boolean run(String image, String name, Runtime config, OutputStream stdout, OutputStream stderr) {
-            String spec = "" /*{" +
+            String spec =
+    "{" +
     "\"name\": \"name\"," +
     "\"guid\": 1234567," +
-    "\"services\": ["
-    "    {{
-    "           \"name\": \"{0}\",
-    "        \"replicas\": {1},
-            \"containers\": [
-                {{
-                    \"image\": \"{2}\",
-                    \"env\": [{{
-                        \"name\": \"METAPARTICLE_IN_CONTAINER\",
-                        \"value\": \"true\"
-                    }}]
-                }}
-            ],
-            \"ports\": [{{
-                \"number\": {3}
-            }}]
-        }}
-    ],
-    \"serve\": {{
-        \"name\": \"{0}\",
-        \"public\": true
-    }}
-}}";*/
+    "\"services\": [" +
+    "    { " +
+    "           \"name\": \"%s\", " +
+    "        \"replicas\": %d, " +
+    "        \"containers\": [ " +
+    "            { " +
+    "               \"image\": \"%s\", "+
+    "               \"env\": [{ " +
+    "                   \"name\": \"METAPARTICLE_IN_CONTAINER\", " +
+    "                   \"value\": \"true\" " +
+    "               }] " +
+    "           } " +
+    "       ], " +
+    "       \"ports\": [{ " +
+    "           \"number\": %d " +
+    "       }] " +
+    "   } " +
+    "], " +
+    "\"serve\": { " +
+    "    \"name\": \"%s\", " +
+    "    \"public\": true " +
+    "} " +
+    "}";
             try {
                 Path specPath = Files.createTempFile("spec", "json");
-                Files.write(specPath, String.format(spec, name, config.replicas(), image, config.ports()[0]).getBytes());
+                Files.write(specPath, String.format(spec, name, config.replicas(), image, config.ports()[0], name).getBytes());
 
-                return handleErrorExec(new String[] {"/home/bburns/gopath/bin/compiler", "-f", specPath.toString()}, stdout, stderr);
+                return handleErrorExec(new String[] {"mp-compiler", "-f", specPath.toString()}, stdout, stderr);
             } catch (IOException ex) {
                 throw new IllegalStateException(ex);
             }
