@@ -1,0 +1,15 @@
+{
+  "name": "@metaparticle/package",
+  "version": "0.0.1",
+  "description": "Automated tooling for easy container images",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Brendan Burns",
+  "license": "MIT",
+  "dependencies": {
+    "shelljs": "^0.7.8"
+  }
+}

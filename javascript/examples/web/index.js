@@ -1,6 +1,6 @@
 const http = require('http');
 const os = require('os');
-const mp = require('./metaparticle-package');
+const mp = require('@metaparticle/package');
 
 const port = 3000;
 
