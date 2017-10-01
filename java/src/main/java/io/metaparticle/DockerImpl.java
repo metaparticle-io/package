@@ -9,18 +9,18 @@ import static io.metaparticle.Util.addAll;
 public class DockerImpl implements Executor, Builder {
     @Override
     public boolean build(String dir, String image, OutputStream stdout, OutputStream stderr) {
-        return handleErrorExec(new String[] {"docker.exe", "build", "-t", image, dir}, stdout, stderr);
+        return handleErrorExec(new String[] {"docker", "build", "-t", image, dir}, stdout, stderr);
     }
 
     @Override
     public boolean push(String image, OutputStream stdout, OutputStream stderr) {
-        return handleErrorExec(new String[] {"docker.exe", "push", image}, stdout, stderr);
+        return handleErrorExec(new String[] {"docker", "push", image}, stdout, stderr);
     }
 
     @Override
     public boolean run(String image, String name, Runtime config, OutputStream stdout, OutputStream stderr) {
         ArrayList<String> cmd = new ArrayList<>();
-        addAll(cmd, new String[]{"docker.exe", "run", "-d", "--name", name});
+        addAll(cmd, new String[]{"docker", "run", "-d", "--name", name});
         if (config != null && config.ports() != null) {
             for (int port : config.ports()) {
                 cmd.add("--port=" + port);
@@ -32,11 +32,11 @@ public class DockerImpl implements Executor, Builder {
 
     @Override
     public boolean logs(String name, OutputStream stdout, OutputStream stderr) {
-        return handleErrorExec(new String[] {"docker.exe", "logs", "-f", name}, stdout, stderr);
+        return handleErrorExec(new String[] {"docker", "logs", "-f", name}, stdout, stderr);
     }
 
     @Override
     public boolean cancel(String name) {
-        return handleErrorExec(new String[] {"docker.exe", "rm", "-f", name}, null, null);
+        return handleErrorExec(new String[] {"docker", "rm", "-f", name}, null, null);
     }
 }

@@ -7,8 +7,10 @@ import static io.metaparticle.Metaparticle.Containerize;
 import java.util.function.Function;
 
 public class Main {
-    @Runtime(ports={5000})
-    @Package(repository="brendanburns")
+    @Runtime(ports={5000},
+             executor="aci")
+    @Package(repository="brendanburns",
+             jarFile="target/metaparticle-package-0.1-SNAPSHOT-jar-with-dependencies.jar")
     public static void main(String[] args) {
         Containerize(() -> {
             while (true) {

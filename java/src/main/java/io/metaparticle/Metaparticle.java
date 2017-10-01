@@ -57,13 +57,13 @@ public class Metaparticle {
         }
     }
 
-    public static void writeDockerfile(String className, String projectName) throws IOException {
+    public static void writeDockerfile(String className, Package p, String projectName) throws IOException {
         String contents = 
 "FROM openjdk:8-jre-alpine\n" +
-"COPY target/%s-0.1-SNAPSHOT-jar-with-dependencies.jar /main.jar\n" +
+"COPY %s /main.jar\n" +
 "CMD java -classpath /main.jar %s";
         byte[] output = 
-            String.format(contents, projectName, className).getBytes();
+            String.format(contents, p.jarFile(), className).getBytes();
         Files.write(Paths.get("Dockerfile"), output);
     }
 
@@ -99,7 +99,7 @@ public class Metaparticle {
                 OutputStream stdout = p.verbose() ? System.out : null;
                 OutputStream stderr = p.quiet() ? null : System.err;
 
-                writeDockerfile(className, "metaparticle-package");
+                writeDockerfile(className, p, "metaparticle-package");
 
                 handleErrorExec(new String[] {"mvn", "package"}, System.out, System.err);
 
