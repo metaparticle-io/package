@@ -140,6 +140,16 @@
       <artifactId>guava</artifactId>
       <version>23.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20170516</version>
+    </dependency>
+    <dependency>
+      <groupId>io.metaparticle</groupId>
+      <artifactId>metaparticle-java</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
   <properties>
     <java.version>1.8</java.version>

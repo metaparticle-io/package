@@ -40,6 +40,8 @@ public class Metaparticle {
                 return new DockerImpl();
             case "aci":
                 return new AciExecutor();
+            case "metaparticle":
+                return new MetaparticleExecutor();
             default:
                 throw new IllegalStateException("Unknown executor: " + cfg.executor());
         }
@@ -93,6 +95,10 @@ public class Metaparticle {
                 Package p = m.getAnnotation(Package.class);
                 Runtime r = m.getAnnotation(Runtime.class);
 
+                if (p.repository().length() != 0) {
+                    image = p.repository() + "/" + image;
+                }
+
                 Executor exec = getExecutor(r);
                 Builder builder = getBuilder(p);
 
@@ -104,6 +110,7 @@ public class Metaparticle {
                 handleErrorExec(new String[] {"mvn", "package"}, System.out, System.err);
 
                 builder.build(".", image, stdout, stderr);
+                builder.push(image, stdout, stderr);
 
                 Runnable cancel = once(() -> exec.cancel(name));
 
