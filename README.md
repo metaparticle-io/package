@@ -11,6 +11,8 @@ Metaparticle/Package simplifies the task of building and deploying container ima
 a collection of libraries that enable programmers to build and deploy containers using code that feels
 familiar to them.
 
+Rather than learn a new set of tools, syntaxes or workflows. The package libraries aim to use language level features to add new capabilities to existing programming languages.
+
 ## Can you give me an example?
 Here's a simple example of building a containerized Java application:
 
