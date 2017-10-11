@@ -6,7 +6,7 @@ using static Metaparticle.Package.Driver;
 namespace simple {
 	public class Program {
         [Metaparticle.Package.Config(Verbose = true,
-			Publish = true, Repository = "brendanburns")] 
+			Publish = true, Repository = "brendanburns/dotnet-simple")] 
         public static void Main(string[] args) => Containerize (args, () =>
         {
 			Console.Out.WriteLine(args);

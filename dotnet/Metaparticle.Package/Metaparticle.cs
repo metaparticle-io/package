@@ -33,6 +33,9 @@ namespace Metaparticle.Package
         }
 
         private ContainerExecutor getExecutor() {
+            if (runtimeConfig == null) {
+                return null;
+            }
             switch (runtimeConfig.Executor) {
                 case "docker":
                     return new DockerExecutor();
@@ -89,6 +92,7 @@ namespace Metaparticle.Package
             var instructions = new List<Instruction>();
             instructions.Add(new Instruction("FROM", "debian:9"));
             instructions.Add(new Instruction("RUN", " apt-get update && apt-get install libunwind8 libicu57"));
+            // TODO: lots of things here are constant, figure out how to cache for perf?
             instructions.Add(new Instruction("COPY", string.Format("* /exe/", dir)));
             instructions.Add(new Instruction("CMD", string.Format("/exe/{0} {1}", exe, getArgs(args))));
 
@@ -98,7 +102,7 @@ namespace Metaparticle.Package
 
             var builder = getBuilder();
 
-            string imgName = (string.IsNullOrEmpty(config.Repository) ? exe : config.Repository + "/" + exe);
+            string imgName = (string.IsNullOrEmpty(config.Repository) ? exe : config.Repository);
             if (!string.IsNullOrEmpty(config.Version)) {
                 imgName += ":" + config.Version;
             }
@@ -112,6 +116,10 @@ namespace Metaparticle.Package
                     Console.Error.WriteLine("Image push failed.");
                     return;
                 }
+            }
+
+            if (runtimeConfig == null) {
+                return;
             }
 
             var exec = getExecutor();
@@ -148,7 +156,7 @@ namespace Metaparticle.Package
                 return;
             }
             Config config = new Config();
-            Metaparticle.Runtime.Config runtimeConfig = new Metaparticle.Runtime.Config();
+            Metaparticle.Runtime.Config runtimeConfig = null;
             var trace = new StackTrace();
             foreach (object attribute in trace.GetFrame(1).GetMethod().GetCustomAttributes(true))
             {

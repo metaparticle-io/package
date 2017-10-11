@@ -17,7 +17,6 @@ public class Main {
     private static final int port = 8080;
 
     @Runtime(ports={port},
-             //replicas=4,
              shards = 4,
              urlShardPattern = "^\\/users\\/([^\\/]*)\\/.*",
              executor="metaparticle")
@@ -31,7 +30,7 @@ public class Main {
                 server.createContext("/", new HttpHandler() {
                     @Override
                     public void handle(HttpExchange t) throws IOException {
-                        String msg = "Hello Velocity [" + t.getRequestURI() + "] from " + System.getenv("HOSTNAME");
+                        String msg = "Hello Containers [" + t.getRequestURI() + "] from " + System.getenv("HOSTNAME");
                         t.sendResponseHeaders(200, msg.length());
                         OutputStream os = t.getResponseBody();
                         os.write(msg.getBytes());

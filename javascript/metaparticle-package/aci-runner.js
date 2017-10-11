@@ -15,7 +15,7 @@
         if (options && options.public) {
             public = '--ip-address Public';
         }
-        shell.exec(`az container create ${public} ${oirts} -g ${rg} --image ${img} --name ${name} -e METAPARTICLE_IN_CONTAINER=true`);
+        shell.exec(`az container create ${public} ${ports} -g ${rg} --image ${img} --name ${name} -e METAPARTICLE_IN_CONTAINER=true`);
         setInterval( () => {
             shell.exec(`az container logs -g ${rg} -n ${name}`);
         }, 5000);

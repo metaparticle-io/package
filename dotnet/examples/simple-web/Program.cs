@@ -14,8 +14,7 @@ namespace web
     public class Program
     {
         const int port = 8080;
-		[Metaparticle.Runtime.Config(Ports = new int[] {port}, Executor = "aci", Public = true)]
-        [Metaparticle.Package.Config(Repository = "brendanburns/dotnet-web", Publish = true, Verbose = true)]
+        [Metaparticle.Package.Config(Repository = "brendanburns/dotnet-simple-web", Publish = true, Verbose = true)]
         public static void Main(string[] args) => Containerize(args, () =>
        	{
             WebHost.CreateDefaultBuilder(args)
