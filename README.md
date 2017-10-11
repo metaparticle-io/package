@@ -48,10 +48,37 @@ But it's fairly straightforward to add other languages, we would love to see con
 ## Details
 
 For more details see the more complete walkthroughs for each language:
+<<<<<<< 3ba0b021fb97e363c9b6c49c7cd80cb90de199ed
    * [java tutorial](tutorials/java/tutorial.md)
    * [.NET Core tutorial](tutorials/dotnet/tutorial.md)
    * [javascript tutorial](tutorials/javascript/tutorial.md)
    * [Ruby tutorial](tutorials/ruby/tutorial.md)
+
+## Operation
+When you link the metaparticle package library into your application, it intercepts and overwrites the
+`main` program entry point. This interception performs the following pseudo code:
+```go
+func main(args []string) {
+    if runningInDockerContainer {
+        executeOriginalMain(args)
+    } else {
+        buildDockerImage()
+        pushDockerImage()
+        if deployRequested {
+            deployDockerImage()
+        }
+    }
+}
+```
+
+The net effect of this is that a developer can containerize, distribute and optionally deploy their application without ever leaving the syntax or confines of their development environment a
+nd language of choice.
+
+At the same time, metaparticle is not intended to be a platform. Under the hood, the libraries still
+write `Dockerfiles` and make calls to the same build and push code. So when a developer wants or needs
+to switch to the complete container tooling, they can easily take their application with them.
+
+In addition to basic packaging and deployment, metaparticle can also implement more [complex distributed system patterns](distributed-patterns.md) via language fluent semantics.
 
 ## Contribute
 There are many ways to contribute to Metaparticle
@@ -63,3 +90,4 @@ There are many ways to contribute to Metaparticle
  * [Contribute bug fixes](https://github.com/metaparticle-io/package/pulls).
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto://opencode@microsoft.com) with any additional questions or comments.
+
