@@ -111,6 +111,10 @@ namespace Metaparticle.Package
             }
 
             var exec = getExecutor();
+            if (exec.PublishRequired() && !config.Publish) {
+                Console.Error.WriteLine("Image publish is required, but image was not published. Set publish to true in the package config.");
+                return;
+            }
             var id = exec.Run(imgName, runtimeConfig);
 
             Console.CancelKeyPress += delegate {

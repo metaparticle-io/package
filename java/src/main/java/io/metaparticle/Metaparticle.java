@@ -119,6 +119,7 @@ public class Metaparticle {
                 OutputStream stderr = p.quiet() ? null : System.err;
 
                 writeDockerfile(className, p, "metaparticle-package");
+
                 if (p.build()) {
                     handleErrorExec(new String[] {"mvn", "package"}, System.out, System.err);                    
                     builder.build(".", image, stdout, stderr);

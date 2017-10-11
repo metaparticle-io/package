@@ -180,5 +180,9 @@ namespace Metaparticle.Package
                 throw new ArgumentException("Must specify either aciConfig.AzureClientSecret or aciConfig.Username and aciConfig.Password");
             }
         }
+
+        public bool PublishRequired() {
+            return true;
+        }
     }
 }

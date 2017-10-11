@@ -6,5 +6,7 @@ namespace Metaparticle.Package {
         void Cancel(string id);
 
         void Logs(string id, TextWriter stdout, TextWriter stderr);
+
+        bool PublishRequired();
     }
 }
