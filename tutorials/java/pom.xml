@@ -105,7 +105,7 @@
     </dependency>
     <dependency>
       <groupId>io.metaparticle</groupId>
-      <artifactId>metaparticle-java</artifactId>
+      <artifactId>metaparticle-package</artifactId>
       <version>0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
