@@ -1,6 +1,7 @@
 package io.metaparticle.tutorial;
 
 import io.metaparticle.annotations.Package;
+import io.metaparticle.annotations.Runtime;
 import static io.metaparticle.Metaparticle.Containerize;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ import com.sun.net.httpserver.HttpServer;
 public class Main {
     private static final int port = 8080;
 
+    @Runtime(ports={port})        
     @Package(repository="brendanburns",
              jarFile="target/metaparticle-package-tutorial-0.1-SNAPSHOT-jar-with-dependencies.jar")
     public static void main(String[] args) {
