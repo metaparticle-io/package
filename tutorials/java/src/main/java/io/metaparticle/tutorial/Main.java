@@ -15,7 +15,10 @@ import com.sun.net.httpserver.HttpServer;
 public class Main {
     private static final int port = 8080;
 
-    @Runtime(ports={port})        
+    @Runtime(ports={port},
+             replicas=4,
+             publicAddress=true,
+             executor="metaparticle")    
     @Package(repository="brendanburns",
              jarFile="target/metaparticle-package-tutorial-0.1-SNAPSHOT-jar-with-dependencies.jar")
     public static void main(String[] args) {

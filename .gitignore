@@ -27,3 +27,10 @@ bld/
 msbuild.log
 msbuild.err
 msbuild.wrn
+
+# Java stuff
+*.classpath
+*.settings
+*.project
+**/node_modules
+**/target
