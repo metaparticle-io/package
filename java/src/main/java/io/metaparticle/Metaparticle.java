@@ -116,13 +116,15 @@ public class Metaparticle {
 
                 writeDockerfile(className, p, "metaparticle-package");
 
-                handleErrorExec(new String[] {"mvn", "package"}, System.out, System.err);
-
-                builder.build(".", image, stdout, stderr);
-                builder.push(image, stdout, stderr);
+                if (p.build()) {
+                    handleErrorExec(new String[] {"mvn", "package"}, System.out, System.err);                    
+                    builder.build(".", image, stdout, stderr);
+                    if (p.publish()) {
+                        builder.push(image, stdout, stderr);
+                    }
+                }
 
                 Runnable cancel = once(() -> exec.cancel(name));
-
                 java.lang.Runtime.getRuntime().addShutdownHook(new Thread(cancel));
 
                 exec.run(image, name, r, stdout, stderr);
