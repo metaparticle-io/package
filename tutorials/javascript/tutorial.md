@@ -42,6 +42,8 @@ server.listen(port, (err) => {
 );
 ```
 
+You can run this with `npm start`.
+
 ## Step One: Containerize the Application
 To build a container from our simple application we need to add a dependency to our
 build file, and then update the code.
@@ -91,7 +93,7 @@ the web server.
 Once you have this, you can run the program with:
 
 ```sh
-npm run
+npm start
 ```
 
 This code will start your web server again. But this time, it is running
@@ -162,6 +164,17 @@ Here's what the snippet looks like:
 
 ```javascript
 ...
+const http = require('http');
+const os = require('os');
+const mp = require('@metaparticle/package');
+
+const port = 8080;
+
+const server = http.createServer((request, response) => {
+	console.log(request.url);
+	response.end(`Hello World: hostname: ${os.hostname()}\n`);
+});
+
 mp.containerize(
 	{
         ports: [8080],
@@ -171,13 +184,31 @@ mp.containerize(
 		publish: true,
 		public: true
 	},
-    ...);
+	() => {
+		server.listen(port, (err) => {
+			if (err) {
+				return console.log('server startup error: ', err);
+			}
+			console.log(`server up on ${port}`);
+		});
+	}
+);
 ...
 ```
 
 And the complete code looks like:
 ```javascript
-// TODO
+mp.containerize(
+	{
+        ports: [8080],
+        replicas: 4,
+		runner: 'metaparticle',
+		repository: 'docker.io/docker-user-goes-here/my-image',
+		publish: true,
+		public: true
+	},
+	...);
+	
 ```
 
 After you compile and run this, you can see that there are four replicas running behind a

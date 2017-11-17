@@ -38,4 +38,4 @@ But now, when you run the application, instead of printing "Hello world", it fir
 then (optionally) deploys itself inside that container.
 
 ## Tutorial
-For a more complete exploration of the Metaparticle/Package for Dotnet Core, please see the [in-depth tutorial](tutorial.md).
+For a more complete exploration of the Metaparticle/Package for Dotnet Core, please see the [in-depth tutorial](../tutorials/javascript/tutorial.md).

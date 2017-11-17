@@ -1,0 +1,16 @@
+{
+   "engines" : {
+      "node" : ">=0.10"
+   },
+   "preferGlobal" : true,
+   "license" : "MIT",
+   "name" : "metaparticle-example",
+   "dependencies" : {
+   },
+   "version" : "0.0.1",
+   "author" : "Brendan Burns <bburns@microsoft.com>",
+   "scripts" : {
+      "start" : "node ./index.js"
+   },
+   "description" : "metaparticle tutorial"
+}

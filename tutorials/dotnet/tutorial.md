@@ -57,7 +57,7 @@ build file, and then update the code.
 
 Run:
 ```sh
-dotnet add package metaparticle-package
+dotnet add package Metaparticle.Package
 ```
 
 Then update the code to read as follows:

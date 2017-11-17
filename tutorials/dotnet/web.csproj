@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\dotnet\Metaparticle.Package\Metaparticle.Package.csproj" />
+    <ProjectReference Include="..\..\dotnet\Metaparticle.Runtime\Metaparticle.Runtime.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.0.0" />
+  </ItemGroup>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+</Project>
