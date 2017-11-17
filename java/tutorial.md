@@ -18,7 +18,7 @@ $ code .
 ```
 
 ## Initial Program
-Inside of the `tutorial` directory, you will find a simple maven project.
+Inside of the `tutorials/java` directory, you will find a simple maven project.
 
 You can build this project with `mvn compile`.
 
