@@ -98,3 +98,5 @@ And that's it. When you compile and run this program, it deploys itself into Kub
 
 If you're curious about the technical details about how this works, check out the
 [metaparticle compiler project](https://github.com/metaparticle-io/metaparticle-ast)
+
+Still looking for more? Continue on to the more advanced [sharding tutorial](sharding-tutorial.md)

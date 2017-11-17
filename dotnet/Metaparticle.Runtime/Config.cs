@@ -2,6 +2,10 @@ namespace Metaparticle.Runtime {
     public class Config : System.Attribute {
         public int Replicas { get; set; }
 
+        public int Shards { get; set; }
+
+        public string ShardExpression { get; set; }
+
         public string Executor { get; set; }
 
         public int[] Ports { get; set; }
