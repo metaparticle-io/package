@@ -8,7 +8,13 @@
         }
         var info = fs.readFileSync("/proc/1/cgroup");
         // This is a little approximate...
-        return info.indexOf("docker") != -1;
+        if (info.indexOf("docker") != -1) {
+            return true;
+        }
+        if (info.indexOf("kubepods") != -1) {
+            return true;
+        }
+        return false;
     };
 
     writeDockerfile = (name) => {
@@ -38,6 +44,8 @@
                 return require('./docker-runner');
             case 'aci':
                 return require('./aci-runner');
+            case 'metaparticle':
+                return require('./metaparticle-runner.js');
             default:
                 throw `Unknown runner: ${execSpec}`;
         }

@@ -23,7 +23,7 @@ public class Metaparticle {
         if (f.exists()) {
             try {
                 String s = new String(Files.readAllBytes(f.toPath()), "UTF-8");
-                return s.indexOf("docker") != -1;
+                return (s.indexOf("docker") != -1 || s.indexOf("kubepods") != -1);
             } catch (IOException ex) {
                 throw new IllegalStateException(ex);
             }

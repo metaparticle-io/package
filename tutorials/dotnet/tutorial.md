@@ -215,3 +215,5 @@ $ kubectl get pods
 $ kubectl get services
 ...
 ```
+
+Still looking for more? Continue on to the more advanced [sharding tutorial](sharding-tutorial.md)

@@ -143,7 +143,7 @@ namespace Metaparticle.Package
             if (File.Exists(cgroupPath)) {
                 var info = File.ReadAllText(cgroupPath);
                 // This is a little approximate...
-                return info.IndexOf("docker") != -1;
+                return info.IndexOf("docker") != -1 || info.IndexOf("kubepods") != -1;
             }
             return false;
         }

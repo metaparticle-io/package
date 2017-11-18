@@ -12,7 +12,8 @@ const server = http.createServer((request, response) => {
 mp.containerize(
 	{
 		ports: [8080],
-		runner: 'aci',
+		replicas: 1,
+		runner: 'metaparticle',
 		repository: 'brendanburns',
 		publish: true,
 		public: true

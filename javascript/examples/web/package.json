@@ -9,5 +9,7 @@
   },
   "author": "Brendan Burns",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "@metaparticle/package": "file:../../metaparticle-package/metaparticle-package-0.0.1.tgz"
+  }
 }
