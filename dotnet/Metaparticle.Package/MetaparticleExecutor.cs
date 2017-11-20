@@ -10,7 +10,9 @@ namespace Metaparticle.Package {
     {
         public void Cancel(string id)
         {
-            HandleErrorExec("mp-compiler", "-f /tmp/spec.json --delete");
+            var specFileName = Path.Combine(".metaparticle", "spec.json");
+
+            HandleErrorExec("mp-compiler", string.Format("-f {0} --delete", specFileName));
         }
 
         private void HandleErrorExec(string cmd, string args, TextWriter stdout=null) {
@@ -70,7 +72,8 @@ namespace Metaparticle.Package {
         ""public"": true
     }}
 }}";
-            var specFileName = Path.Combine(Path.GetTempPath(), "spec.json");
+            Directory.CreateDirectory(".metaparticle");
+            var specFileName = Path.Combine(".metaparticle", "spec.json");
             File.WriteAllText(specFileName, string.Format(spec, name, replicaSpec, image, config.Ports[0]));
 
             HandleErrorExec("mp-compiler", string.Format("-f {0}", specFileName));
