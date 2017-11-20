@@ -33,18 +33,50 @@ A diagram of the shard architecture is below
 Typically a shard deployment would consist of two different application containers (the router and the shard), two different deployment configurations and two services to connect pieces together. That's a lot of YAML and a lot of complexity for an enduser to
 absorb to implement a fairly straightforward concept.
 
-To show how Metaparticle/Sharding can help dramatically simplify this, here is the corresponding code in Java:
+To show how Metaparticle/Sharding can help dramatically simplify this, here is the corresponding code in Dotnet:
 
 ```cs
-TODO
+using System.IO;
+using System.Net;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using static Metaparticle.Package.Driver;
+
+
+namespace web
+{
+    public class Program
+    {
+        const int port = 8080;
+		[Metaparticle.Runtime.Config(Ports = new int[] {port},
+                                     Executor = "metaparticle",
+                                     Shards = 3,
+                                     ShardExpression = "^\\/users\\/([^\\/]*)\\/.*",
+                                     Public = true)]
+        [Metaparticle.Package.Config(Repository = "your-repo-name-here/dotnet-web",
+                                     Publish = true,
+                                     Verbose = true)]
+        public static void Main(string[] args) => Containerize(args, () =>
+       	{
+            WebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>()
+				.UseKestrel(options => { options.Listen(IPAddress.Any, port); })
+                .Build()
+                .Run();
+    	});
+    }
+}
 ```
 
-If you compare this sharded service with the replicated service we saw previously, you'll notice that two lines have been added to update the `@Runtime` annotation to
+If you compare this sharded service with the replicated service we saw previously, you'll notice that two lines have been added to update the `[Metaparticle.Runtime.Config]` annotation to
 indicate the number of shards and the regular expression to use to pick out the
 sharding key:
 
 ```cs
-TODO
+     Shards = 3,
+     ShardExpression = "^\\/users\\/([^\\/]*)\\/.*",
 ```
 
 And that's it. When you compile and run this program, it deploys itself into Kubernetes as a sharded service.

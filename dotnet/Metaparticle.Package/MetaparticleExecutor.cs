@@ -10,8 +10,7 @@ namespace Metaparticle.Package {
     {
         public void Cancel(string id)
         {
-            HandleErrorExec("kubectl", "delete deployments " + id);
-            HandleErrorExec("kubectl", "delete services " + id);
+            HandleErrorExec("mp-compiler", "-f /tmp/spec.json --delete");
         }
 
         private void HandleErrorExec(string cmd, string args, TextWriter stdout=null) {
@@ -35,13 +34,12 @@ namespace Metaparticle.Package {
             var name = "server";
 
             string replicaSpec = null;
-            string shardSpec = null;
 
             if (config.Shards > 0) {
-                shardSpec = string.Format(@"""shardSpec"": {{
+                replicaSpec = string.Format(@"""shardSpec"": {{
                     ""shards"": {0},
                     ""urlPattern"": ""{1}""
-                }", config.Shards, config.ShardExpression);
+                }}", config.Shards, config.ShardExpression);
             } else {
                 replicaSpec = string.Format(@"""replicas"": {0}", config.Replicas);
             }
@@ -52,7 +50,7 @@ namespace Metaparticle.Package {
     ""services"": [ 
         {{
                ""name"": ""{0}"",
-            {},
+            {1},
             ""containers"": [
                 {{
                     ""image"": ""{2}"",
@@ -73,9 +71,9 @@ namespace Metaparticle.Package {
     }}
 }}";
             var specFileName = Path.Combine(Path.GetTempPath(), "spec.json");
-            File.WriteAllText(specFileName, string.Format(spec, name, config.Replicas, image, config.Ports[0]));
+            File.WriteAllText(specFileName, string.Format(spec, name, replicaSpec, image, config.Ports[0]));
 
-            HandleErrorExec("/home/bburns/gopath/bin/compiler", string.Format("-f {0}", specFileName));
+            HandleErrorExec("mp-compiler", string.Format("-f {0}", specFileName));
             return name;
         }
     }
