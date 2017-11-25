@@ -1,6 +1,6 @@
 {
   "name": "@metaparticle/package",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Automated tooling for easy container images",
   "repository": {
     "type": "git",
