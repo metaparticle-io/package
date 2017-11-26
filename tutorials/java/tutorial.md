@@ -9,10 +9,28 @@ For a quick summary, please see the [README](README.md).
 The `docker` command line tool needs to be installed and working. Try:
 `docker ps` to verify this.
 
+### Install dependent libraries
+For now, you need to manually install the needed libraries locally. We'll
+get them up into Maven central shortly...
+
+```sh
+# Install the client library
+
+git clone https://github.com/metaparticle-io/metaparticle-java
+cd metaparticle-java
+mvn package install
+
+# Install Metaparticle/Package
+
+git clone https://github.com/metaparticle-io/package
+cd package/java
+mvn package install
+```
+
 ### Get the code
 ```sh
 $ git clone https://github.com/metaparticle-io/package
-$ cd tutorials/java/
+$ cd package/tutorials/java/
 # [optional, substitute your favorite editor here...]
 $ code .
 ```
@@ -94,7 +112,7 @@ import com.sun.net.httpserver.HttpServer;
 public class Main {
     private static final int port = 8080;
 
-    @Package(repository="brendanburns",
+    @Package(repository="docker.io/your-docker-user-goes-here",
              jarFile="target/metaparticle-package-tutorial-0.1-SNAPSHOT-jar-with-dependencies.jar")
     public static void main(String[] args) {
         Containerize(() -> {
@@ -179,7 +197,7 @@ public class Main {
     private static final int port = 8080;
 
     @Runtime(ports={port})        
-    @Package(repository="brendanburns",
+    @Package(repository="docker.io/your-docker-user-goes-here",
              jarFile="target/metaparticle-package-tutorial-0.1-SNAPSHOT-jar-with-dependencies.jar")
     public static void main(String[] args) {
         Containerize(() -> {
@@ -248,7 +266,7 @@ public class Main {
              replicas=4,
              publicAddress=true,
              executor="metaparticle")    
-    @Package(repository="brendanburns",
+    @Package(repository="docker.io/your-docker-user-goes-here",
              jarFile="target/metaparticle-package-tutorial-0.1-SNAPSHOT-jar-with-dependencies.jar")
     public static void main(String[] args) {
         Containerize(() -> {
@@ -283,3 +301,5 @@ $ kubectl get pods
 $ kubectl get services
 ...
 ```
+
+Still looking for more? Continue on to the more advanced [sharding tutorial](sharding-tutorial.md)
