@@ -1,9 +1,5 @@
 package io.metaparticle.tutorial;
 
-import io.metaparticle.annotations.Package;
-import io.metaparticle.annotations.Runtime;
-import static io.metaparticle.Metaparticle.Containerize;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -15,16 +11,9 @@ import com.sun.net.httpserver.HttpServer;
 public class Main {
     private static final int port = 8080;
 
-    @Runtime(ports={port},
-             replicas=4,
-             publicAddress=true,
-             executor="metaparticle")    
-    @Package(repository="brendanburns",
-             jarFile="target/metaparticle-package-tutorial-0.1-SNAPSHOT-jar-with-dependencies.jar")
     public static void main(String[] args) {
-        Containerize(() -> {
-            try {
-                HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
+    	try {
+       		HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
                 server.createContext("/", new HttpHandler() {
                     @Override
                     public void handle(HttpExchange t) throws IOException {
@@ -37,9 +26,8 @@ public class Main {
                     }
                 });
                 server.start();
-            } catch (IOException ex) {
+        } catch (IOException ex) {
                 ex.printStackTrace();
-            }
-        });
+        }
     }
 }
