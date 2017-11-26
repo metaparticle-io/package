@@ -23,7 +23,7 @@ public class DockerImpl implements Executor, Builder {
         addAll(cmd, new String[]{"docker", "run", "-d", "--name", name});
         if (config != null && config.ports() != null) {
             for (int port : config.ports()) {
-                cmd.add("--port=" + port);
+                cmd.add("-p=" + port);
             }
         }
         cmd.add(image);
