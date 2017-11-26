@@ -12,7 +12,7 @@ The `docker` command line tool needs to be installed and working. Try:
 ### Get the code
 ```sh
 $ git clone https://github.com/metaparticle-io/package
-$ cd tutorials/javascript/
+$ cd package/tutorials/javascript/
 # [optional, substitute your favorite editor here...]
 $ code .
 ```
@@ -69,7 +69,7 @@ const server = http.createServer((request, response) => {
 
 mp.containerize(
 	{
-		repository: 'docker.io/docker-user-goes-here/my-image',
+		repository: 'docker.io/docker-user-goes-here',
 	},
 	() => {
 		server.listen(port, (err) => {
@@ -112,10 +112,11 @@ The code snippet to add is:
 
 ```javascript
 ...
+mp.containerize(
 	{
+                ...
 		ports: [8080],
-        public: true,
-        ...
+        	public: true
 	},...
 ```
 
@@ -136,7 +137,7 @@ const server = http.createServer((request, response) => {
 mp.containerize(
 	{
 		ports: [8080],
-		repository: 'docker.io/docker-user-goes-here/my-image',
+		repository: 'docker.io/docker-user-goes-here',
 		publish: true,
 		public: true
 	},
@@ -163,7 +164,23 @@ into the currently configured Kubernetes environment.
 Here's what the snippet looks like:
 
 ```javascript
+mp.containerize(
+        {
+        	ports: [8080],
+        	replicas: 4,
+                runner: 'metaparticle',
+                repository: 'docker.io/docker-user-goes-here',
+                publish: true,
+                public: true
+        },
+        ...);
 ...
+```
+
+And the complete code looks like:
+
+
+```javascript
 const http = require('http');
 const os = require('os');
 const mp = require('@metaparticle/package');
@@ -177,10 +194,10 @@ const server = http.createServer((request, response) => {
 
 mp.containerize(
 	{
-        ports: [8080],
-        replicas: 4,
+        	ports: [8080],
+        	replicas: 4,
 		runner: 'metaparticle',
-		repository: 'docker.io/docker-user-goes-here/my-image',
+		repository: 'docker.io/docker-user-goes-here',
 		publish: true,
 		public: true
 	},
@@ -194,21 +211,6 @@ mp.containerize(
 	}
 );
 ...
-```
-
-And the complete code looks like:
-```javascript
-mp.containerize(
-	{
-        ports: [8080],
-        replicas: 4,
-		runner: 'metaparticle',
-		repository: 'docker.io/docker-user-goes-here/my-image',
-		publish: true,
-		public: true
-	},
-	...);
-	
 ```
 
 After you compile and run this, you can see that there are four replicas running behind a
