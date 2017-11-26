@@ -54,6 +54,9 @@ mp.containerize(
 			shards: 3,
 			"urlPattern": "\\/users\\/(.*)[^\\/]"
 		},
+                repository: 'docker.io/your-docker-user-goes-here',
+                publish: true,
+                public: true,
 		runner: 'metaparticle',
 	},
 	() => {
@@ -74,9 +77,9 @@ sharding key:
 
 ```javascript
 ...
-		shardSpec: {
-			shards: 3,
-			"urlPattern": "\\/users\\/(.*)[^\\/]"
+	shardSpec: {
+		shards: 3,
+		"urlPattern": "\\/users\\/(.*)[^\\/]"
         },
 ...
 ```
