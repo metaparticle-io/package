@@ -34,3 +34,5 @@ msbuild.wrn
 *.project
 **/node_modules
 **/target
+
+**/.metaparticle
