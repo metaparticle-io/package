@@ -43,7 +43,7 @@ namespace web
        	{
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-				.UseKestrel(options => { options.Listen(IPAddress.Any, port); })
+                .UseKestrel(options => { options.Listen(IPAddress.Any, port); })
                 .Build()
                 .Run();
     	}
@@ -57,7 +57,8 @@ build file, and then update the code.
 
 Run:
 ```sh
-dotnet add package Metaparticle.Package
+dotnet add package Metaparticle.Package --version="0.1.0-beta"
+dotnet add package Metaparticle.Runtime --version="0.1.0-beta"
 ```
 
 Then update the code to read as follows:
@@ -78,6 +79,7 @@ namespace web
     public class Program
     {
         const int port = 8080;
+        [Metaparticle.Runtime.Config]
         [Metaparticle.Package.Config(Repository = "docker.io/docker-user-goes-here/simple-web", Publish = false)]
         public static void Main(string[] args) => Containerize(args, () =>
        	{
@@ -88,7 +90,8 @@ namespace web
                 .Run();
     	});
     }
-}```
+}
+```
 
 You will notice that we added a `Metaparticle.Package.Config` annotation that describes how
 to package the application. You will need to replace `your-docker-user-goes-here`
@@ -96,6 +99,9 @@ with an actual Docker repository path.
 
 You will also notice that we wrapped the main function in the `Containerize`
 function which kicks off the Metaparticle code.
+
+There is also the `Metaparticle.Runtime.Config` annotation. This is what actually runs
+your application. There will be more on that later.
 
 You can run this new program with:
 
@@ -120,7 +126,7 @@ The code snippet to add is:
 
 ```cs
 ...
-    [Metaparticle.Runtime.Config Ports = int[] {8080}]
+    [Metaparticle.Runtime.Config(Ports = int[] {8080})]
 ...
 ```
 
@@ -143,8 +149,10 @@ namespace web
     public class Program
     {
         const int port = 8080;
-        [Metaparticle.Package.Config(Repository = "brendanburns/dotnet-simple-web", Publish = true, Verbose = true)]
-        [Metaparticle.Runtime.Config Ports = int[] {port}]
+        [Metaparticle.Runtime.Config(Ports = new int[] {port})]
+        [Metaparticle.Package.Config(Repository = "docker.io/your-docker-user-name-here/simple-web",
+                                     Publish = true,
+                                     Verbose = true)]
         public static void Main(string[] args) => Containerize(args, () =>
        	{
             WebHost.CreateDefaultBuilder(args)
@@ -157,11 +165,11 @@ namespace web
 }
 ```
 
-Now if you run this with `mvn compile exec:java -Dexec.mainClass=io.metaparticle.tutorial.Main` your webserver will be successfully exposed on port 8080.
+Now if you run this with `dotnet run` your webserver will be successfully exposed on port 8080.
 
 ## Replicating and exposing on the web.
 As a final step, consider the task of exposing a replicated service on the internet.
-To do this, we're going to expand our suage of the `@Runtime` tag. First we will
+To do this, we're going to expand our suage of the `Metaparticle.Runtime.Config` tag. First we will
 add a `replicas` field, which will specify the number of replicas. Second we will
 set our execution environment to `metaparticle` which will launch the service
 into the currently configured Kubernetes environment.
@@ -170,7 +178,7 @@ Here's what the snippet looks like:
 
 ```cs
 ...
-    [Metaparticle.Runtime.Config Ports = int[] {port}, Executor = "metaparticle", Replicas = 4]
+    [Metaparticle.Runtime.Config(Ports = new int[] {port}, Executor = "metaparticle", Replicas = 4)]
 ...
 ```
 
@@ -192,8 +200,8 @@ namespace web
     public class Program
     {
         const int port = 8080;
-        [Metaparticle.Package.Config(Repository = "brendanburns/dotnet-simple-web", Publish = true, Verbose = true)]
-        [Metaparticle.Runtime.Config Ports = int[] {port}, Executor = "metaparticle", Replicas = 4]
+        [Metaparticle.Runtime.Config(Ports = new int[] {port}, Executor = "metaparticle", Replicas = 4)]
+        [Metaparticle.Package.Config(Repository = "docker.io/your-docker-user-name-here/simple-web", Publish = true, Verbose = true)]
         public static void Main(string[] args) => Containerize(args, () =>
        	{
             WebHost.CreateDefaultBuilder(args)
@@ -204,6 +212,11 @@ namespace web
     	});
     }
 }
+```
+
+You can run this using:
+```sh
+dotnet run
 ```
 
 After you compile and run this, you can see that there are four replicas running behind a
