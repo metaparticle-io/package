@@ -1,7 +1,7 @@
 {
-  "name": "web",
+  "name": "sharded-web",
   "version": "1.0.0",
-  "description": "Simple web server example",
+  "description": "Simple sharded web server example",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

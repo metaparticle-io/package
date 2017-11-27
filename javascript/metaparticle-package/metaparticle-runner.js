@@ -42,7 +42,7 @@
         fs.writeFileSync(".metaparticle/service.json", serviceString);
 
         shell.exec('mp-compiler -f .metaparticle/service.json');
-        shell.exec('ktail');
+        shell.exec('mp-compiler -f .metaparticle/service.json --deploy=false --attach=true');
     };
 
     module.exports.cancel = (name) => {

@@ -13,12 +13,12 @@ namespace web
     {
         const int port = 8080;
         public static void Main(string[] args)
-       	{
+        {
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-				.UseKestrel(options => { options.Listen(IPAddress.Any, port); })
+                .UseKestrel(options => { options.Listen(IPAddress.Any, port); })
                 .Build()
                 .Run();
-    	}
+        }
     }
 }
