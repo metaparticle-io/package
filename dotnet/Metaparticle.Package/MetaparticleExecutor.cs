@@ -25,9 +25,10 @@ namespace Metaparticle.Package {
 
         public void Logs(string id, TextWriter stdout, TextWriter stderr)
         {
-            var args = string.Format("-l app={0} --template \"{{{{.Message}}}}\"", id);
-            Console.WriteLine("ktail " + args);
-            Exec("ktail", args, stdout: stdout, stderr: stderr);
+            var specFileName = Path.Combine(".metaparticle", "spec.json");
+
+            var args = string.Format("-f {0} --deploy=false --attach=true", specFileName);
+            Exec("mp-compiler", args, stdout: stdout, stderr: stderr);
         }
 
         public string Run(string image, Runtime.Config config)

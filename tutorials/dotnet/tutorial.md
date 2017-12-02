@@ -1,4 +1,4 @@
-# Metaparticle/Package for Java Tutorial
+# Metaparticle/Package for Dotnet Tutorial
 This is an in-depth tutorial for using Metaparticle/Package for Java
 
 For a quick summary, please see the [README](README.md).

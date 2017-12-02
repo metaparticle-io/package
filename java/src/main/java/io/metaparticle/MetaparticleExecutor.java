@@ -28,7 +28,7 @@ public class MetaparticleExecutor implements Executor {
     }
 
     public boolean logs(String id, OutputStream stdout, OutputStream stderr) {
-        return handleErrorExec(new String[] {"ktail", "-l", "app=" + id, "--template", "\"{{.Message}}\\"}, stdout, stderr);
+        return handleErrorExec(new String[] {"mp-compiler", "-f", specPath.toString(), "--deploy=false", "--attach=true"}, stdout, stderr);
     }
 
     private Service makeShardedService(String image, String name, Runtime config) {
