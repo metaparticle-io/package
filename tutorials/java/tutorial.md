@@ -7,7 +7,13 @@ For a quick summary, please see the [README](README.md).
 
 ### Check the tools
 The `docker` command line tool needs to be installed and working. Try:
-`docker ps` to verify this.
+`docker ps` to verify this.  Go to the [install page](https://get.docker.io) if you need
+to install Docker.
+
+The `mp-compiler` command line tool needs to be installed and working.
+Try `mp-compiler --help` to verify this. Go to the [releases page](https://github.com/metaparticle-io/metaparticle-ast/releases) if you need to install
+the Metaparticle compiler.
+
 
 ### Install dependent libraries
 For now, you need to manually install the needed libraries locally. We'll
