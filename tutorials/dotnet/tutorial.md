@@ -62,7 +62,7 @@ build file, and then update the code.
 
 Run:
 ```sh
-dotnet add package Metaparticle.Package --version="0.1.0-beta"
+dotnet add package Metaparticle.Package --version="0.1.2-beta"
 dotnet add package Metaparticle.Runtime --version="0.1.0-beta"
 ```
 

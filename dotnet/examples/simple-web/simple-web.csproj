@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\..\Metaparticle.Package\Metaparticle.Package.csproj" />
-    <ProjectReference Include="..\..\Metaparticle.Runtime\Metaparticle.Runtime.csproj" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

@@ -48,7 +48,7 @@ namespace Metaparticle.Package {
             }
 
             var spec = @"{{
-    ""name"": ""name"",
+    ""name"": ""{0}"",
     ""guid"": 1234567, 
     ""services"": [ 
         {{

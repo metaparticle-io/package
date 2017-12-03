@@ -10,6 +10,6 @@
   "author": "Brendan Burns",
   "license": "MIT",
   "dependencies": {
-    "@metaparticle/package": "^0.1.0"
+    "@metaparticle/package": "file:../../metaparticle-package/metaparticle-package-0.2.0.tgz"
   }
 }
