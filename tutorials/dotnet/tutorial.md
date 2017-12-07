@@ -1,5 +1,5 @@
 # Metaparticle/Package for Dotnet Tutorial
-This is an in-depth tutorial for using Metaparticle/Package for Java
+This is an in-depth tutorial for using Metaparticle/Package for .NET Core
 
 For a quick summary, please see the [README](README.md).
 
@@ -23,7 +23,7 @@ $ code .
 ```
 
 ## Initial Program
-Inside of the `tutorials/dotnet` directory, you will find a simple maven project.
+Inside of the `tutorials/dotnet` directory, you will find a simple .NET Core project.
 
 You can build this project with `dotnet build`.
 
