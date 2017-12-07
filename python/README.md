@@ -3,7 +3,7 @@ Metaparticle/Package is a collection of libraries intended to
 make building and deploying containers a seamless and idiomatic
 experience for developers.
 
-This is the implementation for Python.
+This is the implementation for Python (3.x, tested on 3.6.x).
 
 ## Introduction
 Metaparticle/Package simplifies and centralizes the task of
