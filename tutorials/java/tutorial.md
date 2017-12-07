@@ -24,13 +24,13 @@ get them up into Maven central shortly...
 
 git clone https://github.com/metaparticle-io/metaparticle-java
 cd metaparticle-java
-mvn package install
+mvn install
 
 # Install Metaparticle/Package
 
 git clone https://github.com/metaparticle-io/package
 cd package/java
-mvn package install
+mvn install
 ```
 
 ### Get the code
