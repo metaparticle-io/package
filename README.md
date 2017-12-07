@@ -37,6 +37,7 @@ Currently:
    * [java](java)
    * [dotnet core](dotnet)
    * [javascript](javascript) (NodeJS)
+   * [go](go)
 
 But it's fairly straightforward to add other languages, we would love to see contributions.
 
