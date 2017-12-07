@@ -6,7 +6,11 @@
         if (process.env.METAPARTICLE_IN_CONTAINER === "true") {
             return true;
         }
-        var info = fs.readFileSync("/proc/1/cgroup");
+        try {
+            var info = fs.readFileSync("/proc/1/cgroup");
+        } catch(err) {
+            return false;
+        }
         // This is a little approximate...
         if (info.indexOf("docker") != -1) {
             return true;
