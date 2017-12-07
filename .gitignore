@@ -36,3 +36,5 @@ msbuild.wrn
 **/target
 
 **/.metaparticle
+
+go/vendor/**
