@@ -6,7 +6,7 @@ def ports(options):
         port_string = ""
         print(options['ports'])
         for i in options['ports']:
-            port_string += "-p {}:{}".format(i, i)
+            port_string += " -p {}:{}".format(i, i)
         return port_string
     except KeyError:
         return ' '

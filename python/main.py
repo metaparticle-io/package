@@ -52,11 +52,10 @@ def select_runner(runSpec):
 def get_name(options):
     try:
         return options['name']
-    except AttributeError:
+    except KeyError:
         pass
 
-    workdir = os.getcwd().split('/')
-    return workdir[len(workdir) - 1]
+    return os.path.basename(os.getcwd())
 
 
 def containerize(repository, options={}):
@@ -83,7 +82,7 @@ def containerize(repository, options={}):
                 if options['publish']:
                     builder.publish(img)
 
-            except AttributeError:
+            except KeyError:
                 pass
 
             runner.run(img, name, options)
