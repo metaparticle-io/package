@@ -15,7 +15,7 @@ result modulo the number of shards).
 
 In this example, we are going to use the path of the request (e.g. `/some/url/path`) as 
 the input to the shard function. Note that the ShardFunction is free to calculate the
-shard number however it sees fit, as long as the numbrer returned for the same input is
+shard number however it sees fit, as long as the number returned for the same input is
 the same. In this tutorial, we will use a regular expression to select out a small part
 of the path to be the shard key.
 
