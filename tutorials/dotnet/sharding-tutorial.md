@@ -1,4 +1,4 @@
-## Metaparticle/Sharding for Dotnet Tutorial
+## Metaparticle/Sharding for .NET Core Tutorial
 
 _Note, this is an advanced tutorial, please start with the [initial tutorial](tutorial.md)_
 

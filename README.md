@@ -35,7 +35,7 @@ packages up the Java code in a container, and runs that container.
 ## What languages do you support?
 Currently:
    * [java](java)
-   * [dotnet core](dotnet)
+   * [.NET core](dotnet)
    * [javascript](javascript) (NodeJS)
 
 But it's fairly straightforward to add other languages, we would love to see contributions.
@@ -44,6 +44,6 @@ But it's fairly straightforward to add other languages, we would love to see con
 
 For more details see the more complete walkthroughs for each language:
    * [java tutorial](java/tutorial.md)
-   * [dotnet tutorial](dotnet/tutorial.md)
+   * [.NET Core tutorial](dotnet/tutorial.md)
    * [javascript tutorial](javascript/tutorial.md)
 
