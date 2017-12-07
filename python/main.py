@@ -29,7 +29,7 @@ def write_dockerfile(name):
         f.write("""FROM python:3
 
 COPY ./ /{}/
-# RUN pip install -r /{}/requirements.txt
+RUN pip install -r /{}/requirements.txt
 
 CMD python /{}/main.py
     """.format(name, name, name))
@@ -84,7 +84,6 @@ def containerize(repository, options={}):
                     builder.publish(img)
 
             except AttributeError:
-                print('no options')
                 pass
 
             runner.run(img, name, options)

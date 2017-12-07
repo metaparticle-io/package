@@ -3,10 +3,13 @@ import os
 
 def ports(options):
     try:
-        ports_list = [str(i) for i in options['ports']]
-        return ''.join(ports_list, ' ')
+        port_string = ""
+        print(options['ports'])
+        for i in options['ports']:
+            port_string += "-p {}:{}".format(i, i)
+        return port_string
     except KeyError:
-        return ''
+        return ' '
 
 
 def run(img, name, options):
