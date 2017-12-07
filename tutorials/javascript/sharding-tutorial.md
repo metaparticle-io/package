@@ -15,13 +15,13 @@ result modulo the number of shards).
 
 In this example, we are going to use the path of the request (e.g. `/some/url/path`) as 
 the input to the shard function. Note that the ShardFunction is free to calculate the
-shard number however it sees fit, as long as the numbrer returned for the same input is
+shard number however it sees fit, as long as the number returned for the same input is
 the same. In this tutorial, we will use a regular expression to select out a small part
 of the path to be the shard key.
 
 #### Shard Architecture
 A typical shard architecture is a two layer design. The first layer or _shard router_ is
-a stateless replicated service which is responsible for reciving user requests, calculating the shard number and sending requests on to the shards.
+a stateless replicated service which is responsible for receiving user requests, calculating the shard number and sending requests on to the shards.
 
 The second layer is the shards themselves. Because every shard is different, the sharding layer is not homogenous and can not be represented by a Kubernetes `Deployment` instead we use a `StatefulSet`.
 
