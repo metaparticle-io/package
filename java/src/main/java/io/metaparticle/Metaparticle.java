@@ -16,8 +16,13 @@ import static io.metaparticle.Util.once;
 public class Metaparticle {
 
     public static boolean inDockerContainer() {
-        if ("true".equals(System.getenv("METAPARTICLE_IN_CONTAINER"))) {
-            return true;
+        switch (System.getenv("METAPARTICLE_IN_CONTAINER")) {
+            case "true":
+            case "1":
+                return true;
+            case "false":
+            case "0":
+                return false;
         }
         File f = new File("/proc/1/cgroup");
         if (f.exists()) {
