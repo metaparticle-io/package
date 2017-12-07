@@ -21,7 +21,7 @@ of the path to be the shard key.
 
 #### Shard Architecture
 A typical shard architecture is a two layer design. The first layer or _shard router_ is
-a stateless replicated service which is responsible for reciving user requests, calculating the shard number and sending requests on to the shards.
+a stateless replicated service which is responsible for receiving user requests, calculating the shard number and sending requests on to the shards.
 
 The second layer is the shards themselves. Because every shard is different, the sharding layer is not homogenous and can not be represented by a Kubernetes `Deployment` instead we use a `StatefulSet`.
 
