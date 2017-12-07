@@ -1,4 +1,4 @@
-## Metaparticle/Package for dotnet Tutorial
+## Metaparticle/Package for .NET COre Tutorial
 
 This directory contains the starter source code and tutorial documentation for Metaparticle/Package for dotnet.
 

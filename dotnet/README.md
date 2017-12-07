@@ -1,9 +1,9 @@
-# Metaparticle/Package for Dotnet Core
+# Metaparticle/Package for .NET Core
 Metaparticle/Package is a collection of libraries intended to 
 make building and deploying containers a seamless and idiomatic
 experience for developers.
 
-This is the implementation for Dotnet Core (C#).
+This is the implementation for .NET Core (C#).
 
 ## Introduction
 Metaparticle/Package simplifies and centralizes the task of
@@ -45,4 +45,4 @@ But now, when you run the application, instead of printing "Hello world", it fir
 then (optionally) deploys itself inside that container.
 
 ## Tutorial
-For a more complete exploration of the Metaparticle/Package for Dotnet Core, please see the [in-depth tutorial](../tutorials/dotnet/tutorial.md).
+For a more complete exploration of the Metaparticle/Package for .NET Core, please see the [in-depth tutorial](../tutorials/dotnet/tutorial.md).

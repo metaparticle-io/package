@@ -7,5 +7,5 @@ To better understand how this works, there are walkthrough tutorials in a variet
 
    * [java](java/tutorial.md)
    * [javascript](javascript/tutorial.md)
-   * [dotnet core (c#)](dotnet/tutorial.md)
+   * [.NET Core (c#)](dotnet/tutorial.md)
 
