@@ -134,9 +134,13 @@ namespace Metaparticle.Package
 
         public static bool InDockerContainer()
         {
-            var inContainer = System.Environment.GetEnvironmentVariable("METAPARTICLE_IN_CONTAINER");
-            if ("true".Equals(inContainer)) {
-                return true;
+            switch (System.Environment.GetEnvironmentVariable("METAPARTICLE_IN_CONTAINER")) {
+                case "true":
+                case "1":
+                    return true;
+                case "false":
+                case "0":
+                    return false;
             }
             // This only works on Linux
             const string cgroupPath = "/proc/1/cgroup";

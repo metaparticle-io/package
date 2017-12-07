@@ -2,9 +2,14 @@
     var fs = require('fs');
     var path = require('path');
 
-    inDocker = () => {
-        if (process.env.METAPARTICLE_IN_CONTAINER === "true") {
-            return true;
+    inDockerContainer = () => {
+        switch (process.env.METAPARTICLE_IN_CONTAINER) {
+            case 'true':
+            case '1':
+                return true;
+            case 'false':
+            case '0':
+                return false;
         }
         var info = fs.readFileSync("/proc/1/cgroup");
         // This is a little approximate...
@@ -59,7 +64,7 @@
             fn = arg1;
             options = null;
         }
-        if (inDocker()) {
+        if (inDockerContainer()) {
             fn();
         } else {
             var dir = process.cwd();
