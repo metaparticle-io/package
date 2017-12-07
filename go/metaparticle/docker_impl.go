@@ -46,10 +46,11 @@ func (d *DockerImpl) Run(image string, name string, config *Runtime, stdout io.W
 		return fmt.Errorf("config must not be nil")
 	}
 	cmdName := "docker"
-	cmdParams := []string{"run", "-d", "--name", name}
+	cmdParams := []string{"run", "-d"}
 	for _, port := range config.Ports {
-		cmdParams = append(cmdParams, fmt.Sprintf("--port=%d:%d", port, port))
+		cmdParams = append(cmdParams, "-p", fmt.Sprintf("%d:%d", port, port))
 	}
+	cmdParams = append(cmdParams, "--name", name, image)
 
 	cmd := exec.Command(cmdName, cmdParams...)
 	cmd.Stdout = stdout
@@ -70,6 +71,11 @@ func (d *DockerImpl) Logs(name string, stdout io.Writer, stderr io.Writer) error
 }
 
 func (d *DockerImpl) Cancel(name string) error {
-	cmd := exec.Command("docker", "rm", "-f", name)
+	cmd := exec.Command("docker", "stop", name)
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("Could not stop the container: %v", err)
+	}
+	cmd = exec.Command("docker", "rm", "-f", name)
 	return cmd.Run()
 }

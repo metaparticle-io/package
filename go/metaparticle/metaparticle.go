@@ -32,12 +32,10 @@ type Runtime struct {
 
 type Package struct {
 	Repository string
-
-	Verbose bool
-
-	Quiet bool
-
-	Builder string
+	Verbose    bool
+	Quiet      bool
+	Builder    string
+	Publish    bool
 }
 
 // Executor implementors are container platforms where the containers can be deployed (e.g. Azure, GCP)
@@ -139,9 +137,11 @@ func Containerize(r *Runtime, p *Package, f func()) {
 			panic(fmt.Sprintf("Could not build the container: %v", err))
 		}
 
-		err = builder.Push(image, os.Stdout, os.Stderr)
-		if err != nil {
-			panic(fmt.Sprintf("Could not push the image to the repository: %v", err))
+		if p.Publish {
+			err = builder.Push(image, os.Stdout, os.Stderr)
+			if err != nil {
+				panic(fmt.Sprintf("Could not push the image to the repository: %v", err))
+			}
 		}
 
 		err = exec.Run(image, name, r, os.Stdout, os.Stderr)
@@ -149,10 +149,9 @@ func Containerize(r *Runtime, p *Package, f func()) {
 			panic(fmt.Sprintf("Error executing the container: %v", err))
 		}
 
-		err = exec.Logs(name, os.Stdout, os.Stderr)
-		if err != nil {
-			panic(fmt.Sprintf("Error getting continer logs : %v", err))
-		}
+		go func() {
+			exec.Logs(name, os.Stdout, os.Stderr)
+		}()
 
 		signalChan := make(chan os.Signal, 1)
 		cleanupDone := make(chan bool)
@@ -165,6 +164,5 @@ func Containerize(r *Runtime, p *Package, f func()) {
 			}
 		}()
 		<-cleanupDone
-
 	}
 }
