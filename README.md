@@ -43,7 +43,6 @@ But it's fairly straightforward to add other languages, we would love to see con
 ## Details
 
 For more details see the more complete walkthroughs for each language:
-   * [java tutorial](java/tutorial.md)
-   * [.NET Core tutorial](dotnet/tutorial.md)
-   * [javascript tutorial](javascript/tutorial.md)
-
+   * [java tutorial](tutorials/java/tutorial.md)
+   * [.NET Core tutorial](tutorials/dotnet/tutorial.md)
+   * [javascript tutorial](tutorials/javascript/tutorial.md)
