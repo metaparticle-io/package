@@ -25,7 +25,7 @@ To containerize this application, you need to use the `metaparticle` library and
 the `containerize` wrapper function like this:
 
 ```python
-from main import containerize
+from metaparticle import containerize
 
 
 @containerize('brendanburns', options={'name': 'testcontainer', 'publish': True})

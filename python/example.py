@@ -1,4 +1,4 @@
-from main import containerize
+from metaparticle import containerize
 
 
 @containerize('brendanburns', options={'ports': ['80', '8080']})
