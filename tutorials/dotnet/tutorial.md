@@ -1,5 +1,5 @@
 # Metaparticle/Package for .NET Core Tutorial
-This is an in-depth tutorial for using Metaparticle/Package for .NET Core
+This is an in-depth tutorial for using Metaparticle/Package for .NET Core.
 
 For a quick summary, please see the [README](README.md).
 

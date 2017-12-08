@@ -1,5 +1,5 @@
 # Metaparticle/Package for .NET Core
-Metaparticle/Package is a collection of libraries intended to 
+Metaparticle/Package is a collection of libraries intended to
 make building and deploying containers a seamless and idiomatic
 experience for developers.
 
@@ -11,9 +11,9 @@ building and deploying a container image.
 
 Here is a quick example.
 
-Consider this simple Dotnet Core application:
+Consider this simple .NET Core application:
 
-```dotnet
+```cs
 namespace simple {
     public class Program {
         public static void main(string[] args) {
@@ -26,15 +26,15 @@ namespace simple {
 To containerize this application, you need to add the `[Metaparticle.Package.Config ...]` annotation and the `Containerize` wrapper function
 like this:
 
-```dotnet
+```cs
 using static Metaparticle.Package.Driver;
 
 namespace simple {
 	public class Program {
-        [Metaparticle.Package.Config(Repository = "brendanburns/dotnet-simple")] 
+        [Metaparticle.Package.Config(Repository = "brendanburns/dotnet-simple")]
         public static void Main(string[] args) => Containerize (args, () =>
         {
-			Console.WriteLine("Hello world!";
+			Console.WriteLine("Hello world!");
         });
     }
 }
