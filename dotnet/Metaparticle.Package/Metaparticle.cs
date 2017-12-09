@@ -2,27 +2,25 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-//using Mono.Unix;
-using dockerfile;
 using System.Text;
+using dockerfile;
 using static Metaparticle.Package.Util;
+using RuntimeConfig = Metaparticle.Runtime.Config;
 
 namespace Metaparticle.Package
 {
     public class Driver
     {
         private Config config;
-        private Metaparticle.Runtime.Config runtimeConfig;
+        private RuntimeConfig runtimeConfig;
 
-        public Driver(Config config, Metaparticle.Runtime.Config runtimeConfig) {
+        public Driver(Config config, RuntimeConfig runtimeConfig) {
             this.config = config;
             this.runtimeConfig = runtimeConfig;
         }
 
         private ImageBuilder getBuilder() {
-            switch (config.Builder) {
+            switch (config.Builder.ToLowerInvariant()) {
                 case "docker":
                     return new DockerBuilder();
                 case "aci":
@@ -36,7 +34,7 @@ namespace Metaparticle.Package
             if (runtimeConfig == null) {
                 return null;
             }
-            switch (runtimeConfig.Executor) {
+            switch (runtimeConfig.Executor.ToLowerInvariant()) {
                 case "docker":
                     return new DockerExecutor();
                 case "aci":
@@ -160,7 +158,7 @@ namespace Metaparticle.Package
                 return;
             }
             Config config = new Config();
-            Metaparticle.Runtime.Config runtimeConfig = null;
+            RuntimeConfig runtimeConfig = null;
             var trace = new StackTrace();
             foreach (object attribute in trace.GetFrame(1).GetMethod().GetCustomAttributes(true))
             {
@@ -168,8 +166,8 @@ namespace Metaparticle.Package
                 {
                     config = (Config) attribute;
                 }
-                if (attribute is Metaparticle.Runtime.Config) {
-                    runtimeConfig = (Metaparticle.Runtime.Config) attribute;
+                if (attribute is RuntimeConfig) {
+                    runtimeConfig = (RuntimeConfig) attribute;
                 }
             }
             var mp = new Driver(config, runtimeConfig);
