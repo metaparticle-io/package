@@ -36,3 +36,7 @@ msbuild.wrn
 **/target
 
 **/.metaparticle
+
+go/vendor/**
+go/**/debug
+go/**/Dockerfile
