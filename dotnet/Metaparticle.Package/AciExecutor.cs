@@ -1,11 +1,12 @@
-
 using System;
 using System.IO;
-using static Metaparticle.Package.Util;
-using Newtonsoft.Json.Linq;
 using System.Threading;
+using Newtonsoft.Json.Linq;
+using static Metaparticle.Package.Util;
+using RuntimeConfig = Metaparticle.Runtime.Config;
 
-namespace Metaparticle.Package {
+namespace Metaparticle.Package
+{
     public class AciExecutor : ContainerExecutor
     {
         public AciExecutor() {
@@ -28,7 +29,7 @@ namespace Metaparticle.Package {
             }
         }
 
-        public string Run(string image, Metaparticle.Runtime.Config config)
+        public string Run(string image, RuntimeConfig config)
         {
             // TODO: handle multiple ports
             var portStr = "";
