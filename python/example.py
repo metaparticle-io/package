@@ -6,7 +6,8 @@ def container_with_port():
     print('hello container_with_port')
 
 
-@containerize('brendanburns', options={'name': 'testcontainer', 'publish': True})
+@containerize(
+    'brendanburns', options={'name': 'testcontainer', 'publish': True})
 def hihi():
     print('hello worldd')
 
