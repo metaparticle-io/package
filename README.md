@@ -47,3 +47,14 @@ For more details see the more complete walkthroughs for each language:
    * [java tutorial](tutorials/java/tutorial.md)
    * [.NET Core tutorial](tutorials/dotnet/tutorial.md)
    * [javascript tutorial](tutorials/javascript/tutorial.md)
+
+## Contribute
+There are many ways to contribute to Metaparticle
+
+ * [Submit bugs](https://github.com/metaparticle-io/package/issues) and help us verify fixes as they are checked in.
+ * Review the source code changes.
+ * Engage with other Metaparticle users and developers on [gitter](https://gitter.im/metaparticle-io/Lobby).
+ * Join the #metaparticle discussion on [Twitter](https://twitter.com/MetaparticleIO).
+ * [Contribute bug fixes](https://github.com/metaparticle-io/package/pulls).
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto://opencode@microsoft.com) with any additional questions or comments.
