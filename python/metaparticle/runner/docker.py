@@ -1,12 +1,11 @@
 import os
 
 
-def ports(options):
+def ports(ports):
     try:
         port_string = ""
-        print(options['ports'])
-        for i in options['ports']:
-            port_string += " -p {}:{}".format(i, i)
+        for port in ports:
+            port_string += " -p {port}:{port}".format(port=port)
         return port_string
     except KeyError:
         return ' '
@@ -16,7 +15,7 @@ def run(img, name, options):
     # Launch docker container
     os.system('docker run --rm --name {} {} -d {}'.format(
         name,
-        ports(options),
+        ports(options.ports),
         img
     ))
     # Attach to logs
