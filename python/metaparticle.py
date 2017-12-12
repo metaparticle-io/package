@@ -10,15 +10,11 @@ def is_in_docker_container():
         return False
 
     try:
-        with open('/proc/1/cgroup', 'r+t') as f:
-            lines = f.read().splitlines()
-            last_line = lines[-1]
-            if 'docker' in last_line:
-                return True
-            elif 'kubepods' in last_line:
-                return True
-            else:
+        with open('/proc/1/sched', 'rt') as f:
+            if '(1,' in f.readline():
                 return False
+            else:
+                return True
 
     except FileNotFoundError:
         return False
