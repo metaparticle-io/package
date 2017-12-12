@@ -1,9 +1,9 @@
 import os
 import sys  
 
-import metaparticle.option as option
-import metaparticle.builder as builder
-import metaparticle.runner as runner
+import metaparticle_pkg.option as option
+import metaparticle_pkg.builder as builder
+import metaparticle_pkg.runner as runner
 
 def is_in_docker_container():
     mp_in_container = os.getenv('METAPARTICLE_IN_CONTAINER', None)
@@ -52,11 +52,9 @@ class Containerize(object):
             write_dockerfile(self.package)
             self.builder.build(self.image)
 
-            try:
-                if self.package.publish:
-                    self.builder.publish(self.image)
-            except KeyError:
-                pass
-            
-            return self.runner.run(self.image, self.package.name, self.runtime)
+            if self.package.publish:
+                self.builder.publish(self.image)
+
+            self.runner.run(self.image, self.package.name, self.runtime)
+            return self.runner.logs(self.image)
         return wrapped

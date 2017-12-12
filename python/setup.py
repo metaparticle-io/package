@@ -4,11 +4,12 @@ import os
 exec(open('./metaparticle/version.py').read())
 
 setuptools.setup(
-    name='metaparticle',
+    name='metaparticle_pkg',
     version=__version__,
     url='https://github.com/metaparticle-io/package/tree/master/python',
     license=__license__,
     description='Easily containerize your python application',
+    author='Metaparticle Authors',
     packages=setuptools.find_packages(),
     package_data={},
     include_package_data=False,
