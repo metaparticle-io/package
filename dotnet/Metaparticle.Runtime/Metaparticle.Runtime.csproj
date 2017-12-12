@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <PackageVersion>0.1.0-beta</PackageVersion>
+    <PackageVersion>0.1.3-beta</PackageVersion>
     <Authors>The Metaparticle Project Authors</Authors>
     <Copyright>2017 The Metaparticle Project Authors</Copyright>
     <Description>Package library for language idiomatic containeriziation</Description>
