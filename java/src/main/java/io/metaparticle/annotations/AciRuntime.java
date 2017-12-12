@@ -35,5 +35,5 @@ public @interface AciRuntime {
     /**
      * The resource group to create container instance.
      */
-    public String aciResourceGroup() default "";
+    public String aciResourceGroup() default "metaparticle-execution";
 }
