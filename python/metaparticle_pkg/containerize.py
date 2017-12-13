@@ -14,25 +14,29 @@ def is_in_docker_container():
         return False
 
     try:
-        with open('/proc/1/sched', 'rt') as f:
-            if '(1,' in f.readline():
-                return False
-            else:
+        with open('/proc/1/cgroup', 'r+t') as f:
+            lines = f.read().splitlines()
+            last_line = lines[-1]
+            if 'docker' in last_line:
                 return True
+            elif 'kubepods' in last_line:
+                return True
+            else:
+                return False
 
-    except FileNotFoundError:
+    except IOError:
         return False
 
 
-def write_dockerfile(package):
+def write_dockerfile(package, exec_file):
     with open('Dockerfile', 'w+t') as f:
         f.write("""FROM python:{version}-alpine
 
 COPY ./ /{name}/
-RUN pip install -r /{name}/requirements.txt
+RUN pip install --no-cache -r /{name}/requirements.txt
 
-CMD python /{name}/example.py
-""".format(name=package.name, version=package.py_version))
+CMD python /{name}/{exec_file}
+""".format(name=package.name, version=package.py_version, exec_file=exec_file))
 
 
 class Containerize(object):
@@ -50,14 +54,19 @@ class Containerize(object):
             if is_in_docker_container():
                 return func(*args, **kwargs)
 
-            write_dockerfile(self.package)
+            exec_file = sys.argv[0]
+            slash_ix = exec_file.find('/')
+            if slash_ix != -1:
+                exec_file = exec_file[slash_ix:]
+
+            write_dockerfile(self.package, exec_file)
             self.builder.build(self.image)
 
             if self.package.publish:
                 self.builder.publish(self.image)
 
             def signal_handler(signal, frame):
-                self.runner.cancel(name)
+                self.runner.cancel(self.image)
                 sys.exit(0)
             signal.signal(signal.SIGINT, signal_handler)
 
