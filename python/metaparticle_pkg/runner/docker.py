@@ -5,9 +5,9 @@ class DockerRunner:
     def run(self, img, name, options):
         # Launch docker container
         command = ['docker', 'run', '-d', '--name', name]
-        if options.get('ports', None) is not None and len(options['ports']) > 0:
+        if options.ports is not None and len(options.ports) > 0:
             command.append('-p')
-            for i in options['ports']:
+            for i in options.ports:
                 command.append("{}:{}".format(i, i))
         command.append(img)
         subprocess.check_call(command)

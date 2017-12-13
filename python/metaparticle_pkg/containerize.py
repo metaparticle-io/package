@@ -32,11 +32,11 @@ def write_dockerfile(package, exec_file):
     with open('Dockerfile', 'w+t') as f:
         f.write("""FROM python:{version}-alpine
 
-COPY ./ /{name}/
-RUN pip install --no-cache -r /{name}/requirements.txt
+COPY ./ /app/
+RUN pip install --no-cache -r /app/requirements.txt
 
-CMD python /{name}/{exec_file}
-""".format(name=package.name, version=package.py_version, exec_file=exec_file))
+CMD python /app/{exec_file}
+""".format(version=package.py_version, exec_file=exec_file))
 
 
 class Containerize(object):

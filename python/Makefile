@@ -13,5 +13,8 @@ venv:
 	venv/bin/pip install -e .
 	venv/bin/pip install --upgrade tox
 
+publish: 
+	python setup.py sdist upload -r pypi
+
 clean:
 	rm -rf build dist *.egg-info MANIFEST

@@ -1,7 +1,7 @@
 import setuptools
 import os
 
-exec(open('./metaparticle/version.py').read())
+exec(open('./metaparticle_pkg/version.py').read())
 
 setuptools.setup(
     name='metaparticle_pkg',
@@ -30,7 +30,6 @@ setuptools.setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Software Development :: Libraries :: Python Modules',
-        'Topic :: System :: Containers',
         'Topic :: Utilities',
         ]
 )
