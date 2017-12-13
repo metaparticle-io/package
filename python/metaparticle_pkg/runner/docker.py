@@ -10,13 +10,13 @@ class DockerRunner:
             for i in options['ports']:
                 command.append("{}:{}".format(i, i))
         command.append(img)
-        subprocess.run(command, check=True)
+        subprocess.check_call(command)
 
     def logs(self, name):
         # Attach to logs
         # TODO: make this streaming...
-        subprocess.run(['docker', 'logs', '-f', name], check=True)
+        subprocess.check_call(['docker', 'logs', '-f', name])
 
     def cancel(self, name):
-        subprocess.run(['docker', 'kill', name], check=True)
-        subprocess.run(['docker', 'rm', name], check=True)
+        subprocess.check_call(['docker', 'kill', name])
+        subprocess.check_call(['docker', 'rm', name])

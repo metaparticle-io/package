@@ -1,5 +1,6 @@
 import os
-import sys  
+import signal
+import sys 
 
 import metaparticle_pkg.option as option
 import metaparticle_pkg.builder as builder
@@ -25,7 +26,7 @@ def is_in_docker_container():
 
 def write_dockerfile(package):
     with open('Dockerfile', 'w+t') as f:
-        f.write("""FROM python:{version}
+        f.write("""FROM python:{version}-alpine
 
 COPY ./ /{name}/
 RUN pip install -r /{name}/requirements.txt
@@ -54,6 +55,11 @@ class Containerize(object):
 
             if self.package.publish:
                 self.builder.publish(self.image)
+
+            def signal_handler(signal, frame):
+                self.runner.cancel(name)
+                sys.exit(0)
+            signal.signal(signal.SIGINT, signal_handler)
 
             self.runner.run(self.image, self.package.name, self.runtime)
             return self.runner.logs(self.image)

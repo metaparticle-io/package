@@ -2,7 +2,7 @@ import subprocess
 
 class DockerBuilder:
     def build(self, img):
-        subprocess.run(['docker', 'build', '-t', img, '.'], check=True)
+        subprocess.check_call(['docker', 'build', '-t', img, '.'])
 
     def publish(self, img):
-        subprocess.run(['docker', 'push', img], check=True)
+        subprocess.check_call(['docker', 'push', img])
