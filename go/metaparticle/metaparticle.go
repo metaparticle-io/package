@@ -28,6 +28,36 @@ type Runtime struct {
 
 	// Returns whether the service wants a public IP when deployed (usually involves the creation of a load balancer)
 	PublicAddress bool
+
+	// The ACI runtime config
+	AciConfig *AciRuntimeConfig
+}
+
+// AciRuntimeConfig - runtime config for ACI executor.
+type AciRuntimeConfig struct {
+	// Azure tenant id.
+	AzureTenantID string
+
+	// Azure subscription id.
+	// Container instances will be created using the given subscription.
+	AzureSubscriptionID string
+
+	// Azure client id (aka. application id).
+	AzureClientID string
+
+	// Azure client secret (aka. application key).
+	// If specified, then will authenticate to Azure as service principal.
+	// And then no need to specify username/password.
+	AzureClientSecret string
+
+	// If client secret is not specified, use username and password.
+	Username string
+
+	// If client secret is not specified, use username and password.
+	Password string
+
+	// The resource group to create container instance.
+	AciResourceGroup string
 }
 
 type Package struct {
