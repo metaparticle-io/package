@@ -25,10 +25,10 @@ To containerize this application, you need to use the `metaparticle` library and
 the `containerize` wrapper function like this:
 
 ```python
-from metaparticle import containerize
+from metaparticle import Containerize
 
 
-@containerize('brendanburns', options={'name': 'testcontainer', 'publish': True})
+@Containerize(package={'name': 'testcontainer', 'repo': 'brendanburns', 'publish': True})
 def main():
     print('hello world')
 
@@ -40,3 +40,16 @@ if __name__ == '__main__':
 
 When you run this application, instead of printing "Hello world", it first packages itself as a container, and
 then (optionally) deploys itself inside that container.
+
+## Tutorial
+
+```bash
+git clone https://github.com/metaparticle-io/package/
+cd package/python
+
+make venv
+source venv/bin/activate
+
+cd examples
+python example.py
+```
