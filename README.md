@@ -33,11 +33,13 @@ When you run this program via the `java` command or your IDE, rather than simply
 packages up the Java code in a container, and runs that container.
 
 ## What languages do you support?
+
 Currently:
    * [java](java)
    * [.NET core](dotnet)
    * [javascript](javascript) (NodeJS)
    * [go](go)
+   * [ruby](ruby)
 
 But it's fairly straightforward to add other languages, we would love to see contributions.
 
@@ -47,6 +49,7 @@ For more details see the more complete walkthroughs for each language:
    * [java tutorial](tutorials/java/tutorial.md)
    * [.NET Core tutorial](tutorials/dotnet/tutorial.md)
    * [javascript tutorial](tutorials/javascript/tutorial.md)
+   * [Ruby tutorial](tutorials/ruby/tutorial.md)
 
 ## Contribute
 There are many ways to contribute to Metaparticle
