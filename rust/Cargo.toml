@@ -1,0 +1,9 @@
+[package]
+name = "metaparticle"
+version = "0.0.1"
+
+[[example]]
+name = "hello"
+path = "examples/hello.rs"
+
+[dependencies]
