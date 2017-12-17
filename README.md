@@ -33,11 +33,13 @@ When you run this program via the `java` command or your IDE, rather than simply
 packages up the Java code in a container, and runs that container.
 
 ## What languages do you support?
+
 Currently:
    * [java](java)
    * [.NET core](dotnet)
    * [javascript](javascript) (NodeJS)
    * [go](go)
+   * [ruby](ruby)
 
 But it's fairly straightforward to add other languages, we would love to see contributions.
 
@@ -47,3 +49,15 @@ For more details see the more complete walkthroughs for each language:
    * [java tutorial](tutorials/java/tutorial.md)
    * [.NET Core tutorial](tutorials/dotnet/tutorial.md)
    * [javascript tutorial](tutorials/javascript/tutorial.md)
+   * [Ruby tutorial](tutorials/ruby/tutorial.md)
+
+## Contribute
+There are many ways to contribute to Metaparticle
+
+ * [Submit bugs](https://github.com/metaparticle-io/package/issues) and help us verify fixes as they are checked in.
+ * Review the source code changes.
+ * Engage with other Metaparticle users and developers on [gitter](https://gitter.im/metaparticle-io/Lobby).
+ * Join the #metaparticle discussion on [Twitter](https://twitter.com/MetaparticleIO).
+ * [Contribute bug fixes](https://github.com/metaparticle-io/package/pulls).
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto://opencode@microsoft.com) with any additional questions or comments.
