@@ -45,25 +45,6 @@ impl Default for Package {
     }
 }
 
-
-pub fn nothing() {
-    let package = Package {
-        repository: Some("repository".to_string()),
-        verbose: Some(false), 
-        quiet:  Some(false),
-        builder: Some("builder".to_string()),
-        publish: Some(false)
-    };
-    println!("Nothing... {:?}", package);
-}
-
-
-
-// pub fn containerize(runtime: Runtime, package: Package) {
-//     println!("Hello Metaparticle! package: {:?}", package);
-//     println!("Hello Metaparticle! runtime: {:?}", runtime);
-// }
-
 pub fn containerize<F>(f: F, runtime: Runtime, package: Package) where F: Fn() {
     println!("Hello Metaparticle! package: {:?}", package);
     println!("Hello Metaparticle! runtime: {:?}", runtime);
