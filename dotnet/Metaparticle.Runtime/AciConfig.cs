@@ -36,5 +36,10 @@
         /// The resource group to create container instance.
         /// </summary>
         public string AciResourceGroup { get; set; } = "metaparticle-execution";
+
+        public AciConfig()
+        {
+            Executor = "aci";
+        }
     }
 }
