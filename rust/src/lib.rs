@@ -1,3 +1,6 @@
+
+mod builder;
+
 use std::env;
 use std::error::Error;
 use std::fs::File;
@@ -5,7 +8,6 @@ use std::ffi::OsStr;
 use std::io;
 use std::io::prelude::*;
 use std::path::Path;
-
 
 #[derive(Debug)]
 pub struct Runtime {
