@@ -40,3 +40,6 @@ msbuild.wrn
 go/vendor/**
 go/**/debug
 go/**/Dockerfile
+
+python/**/MANIFEST
+python/**/dist

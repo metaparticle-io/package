@@ -1,0 +1,2 @@
+six==1.10.0
+metaparticle_pkg==0.4.1
