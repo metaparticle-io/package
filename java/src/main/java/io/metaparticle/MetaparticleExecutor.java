@@ -1,6 +1,9 @@
 package io.metaparticle;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.microsoft.rest.serializer.JacksonAdapter;
+import io.metaparticle.annotations.Runtime;
 import io.metaparticle.models.Container;
 import io.metaparticle.models.EnvVar;
 import io.metaparticle.models.Service;
@@ -12,10 +15,9 @@ import io.metaparticle.models.ShardSpecification;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
-import io.metaparticle.annotations.Runtime;
 
 import static io.metaparticle.Util.addAll;
 import static io.metaparticle.Util.handleErrorExec;
@@ -104,8 +106,12 @@ public class MetaparticleExecutor implements Executor {
         }
 
         try {
-            specPath = Files.createTempFile("spec", ".json");
-            String json = new JacksonAdapter().serialize(s);
+            Path cwd = Paths.get(".");
+            Path dir = cwd.resolve(".metaparticle");
+            Files.createDirectories(dir);
+            specPath = dir.resolve("spec.json");
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String json = gson.toJson(s);
             Files.write(specPath, json.getBytes());
             return handleErrorExec(new String[] { "mp-compiler", "-f", specPath.toString() }, stdout, stderr);
         } catch (IOException ex) {

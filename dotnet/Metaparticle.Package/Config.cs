@@ -14,6 +14,8 @@ namespace Metaparticle.Package {
 
         public bool Publish { get; set; }
 
+        public string Dockerfile { get; set; }
+
         public Config() {
             Builder = "docker";
         }

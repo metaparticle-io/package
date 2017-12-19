@@ -15,7 +15,11 @@ public @interface Package {
 
     String builder() default "docker";
 
+    boolean build() default true;
+
     boolean publish() default false;
 
     String jarFile() default "";
+
+    String dockerfile() default "";
 }

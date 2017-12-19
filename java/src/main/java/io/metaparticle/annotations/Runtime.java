@@ -16,4 +16,6 @@ public @interface Runtime {
     public int[] ports() default {};
 
     public boolean publicAddress() default false;
+
+    public boolean election() default false;
 }
