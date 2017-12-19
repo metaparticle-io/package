@@ -29,6 +29,6 @@ class ShardSpec(namedtuple('ShardSpec', 'shards shardExpression')):
 
 class PackageOptions(namedtuple('Package', 'repository name builder publish verbose quiet py_version')):
     required_options = ['repository']
-    def __new__(cls, repository, name, builder='docker', publish=False, verbose=True, quiet=False, py_version=3):
+    def __new__(cls, repository, name, builder='docker', publish=False, verbose=True, quiet=False, py_version=3, dockerfile=None):
         name = name if name else os.path.basename(os.getcwd())
         return super(PackageOptions, cls).__new__(cls, repository, name, builder, publish, verbose, quiet, py_version)

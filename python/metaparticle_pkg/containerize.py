@@ -1,6 +1,7 @@
 import os
+import shutil
 import signal
-import sys 
+import sys
 
 import metaparticle_pkg.option as option
 import metaparticle_pkg.builder as builder
@@ -29,6 +30,10 @@ def is_in_docker_container():
 
 
 def write_dockerfile(package, exec_file):
+    if package.dockerfile is not None:
+        shutil.copy(package.dockerfile, 'Dockerfile')
+        return
+
     with open('Dockerfile', 'w+t') as f:
         f.write("""FROM python:{version}-alpine
 

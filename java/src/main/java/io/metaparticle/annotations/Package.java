@@ -20,4 +20,6 @@ public @interface Package {
     boolean publish() default false;
 
     String jarFile() default "";
+
+    String dockerfile() default "";
 }

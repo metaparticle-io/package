@@ -1,4 +1,4 @@
-(function () {
+(function() {
     var fs = require('fs');
     var path = require('path');
 
@@ -13,7 +13,7 @@
         }
         try {
             var info = fs.readFileSync("/proc/1/cgroup");
-        } catch(err) {
+        } catch (err) {
             return false;
         }
         // This is a little approximate...
@@ -26,7 +26,12 @@
         return false;
     };
 
-    writeDockerfile = (name) => {
+    writeDockerfile = (options) => {
+        if (options.dockerfile) {
+            fs.copyFileSync(src, 'Dockerfile');
+            return;
+        }
+        var name = options.name;
         var dockerfile = `FROM node:6-alpine
         
         COPY ./ /${name}/
@@ -39,7 +44,7 @@
     };
 
     selectBuilder = (buildSpec) => {
-        switch(buildSpec) {
+        switch (buildSpec) {
             case 'docker':
                 return require('./docker-builder');
             default:
@@ -75,18 +80,18 @@
             var pkgJson = JSON.parse(fs.readFileSync(path.join(dir, 'package.json')));
             var name = pkgJson.name;
             var img = name;
-            
+
             var builder = selectBuilder((options && options.builder) ? options.builder : 'docker');
             var runner = selectRunner((options && options.runner) ? options.runner : 'docker');
 
-            process.on('SIGINT', function () {
+            process.on('SIGINT', function() {
                 runner.cancel(name);
                 process.exit();
             });
             if (options && options.repository) {
                 img = options.repository + '/' + img;
             }
-            writeDockerfile(name)
+            writeDockerfile(options);
             builder.build(img);
             if (options && options.publish) {
                 builder.publish(img);
