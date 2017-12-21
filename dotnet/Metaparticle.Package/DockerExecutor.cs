@@ -21,6 +21,10 @@ namespace Metaparticle.Package {
             Exec("docker", string.Format("logs -f {0}", id), stdout, stderr);
         }
 
+        public bool PublishRequired() {
+            return false;
+        }
+
         private string portString(int[] ports) {
             if (ports == null || ports.Length == 0) {
                 return "";
