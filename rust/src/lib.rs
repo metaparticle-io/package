@@ -1,5 +1,9 @@
 
 mod builder;
+mod executor;
+
+use builder::Builder;
+use executor::Executor;
 
 use std::env;
 use std::error::Error;
@@ -56,38 +60,15 @@ impl Default for Package {
     }
 }
 
-pub trait Executor {
-    fn placeholder(&self);
-}
-
-
-
-struct DockerExecutor{}
 
 struct FakeExecutor{}
 
-impl Executor for DockerExecutor {
-    fn placeholder(&self) {
-        println!("Docker executor");
-    }
-}
 
 impl Executor for FakeExecutor {
     fn placeholder(&self) {
         println!("Fake executor");
     }
-}
-
-pub trait Builder {
-    fn placeholder(&self);
-}
-
-struct DockerBuilder{}
-
-impl Builder for DockerBuilder {
-    fn placeholder(&self) {
-        println!("Docker builder!");
-    }
+    fn run(&self, image: String, name: String, config: Runtime) {}
 }
 
 struct FakeBuilder{}
@@ -96,6 +77,10 @@ impl Builder for FakeBuilder {
     fn placeholder(&self) {
         println!("Fake builder!");
     }
+    fn build(&self, dir: String, image: String) {}
+    fn push(&self, image: String) {}
+    fn logs(&self, name: String) {}
+    fn cancel(&self, name: String) {}
 }
 
 fn in_docker_container() -> bool {
@@ -119,25 +104,25 @@ fn in_docker_container() -> bool {
 fn executor_from_runtime(executor_name: Option<String>) -> Box<Executor> {
     if let Some(name) = executor_name {
         let executor : Box<Executor> = match name.as_ref() {
-            "docker" => Box::new(DockerExecutor{}),
+            "docker" => Box::new(executor::docker::DockerExecutor{}),
             "fake" => Box::new(FakeExecutor{}),
             _ => panic!("Unsupported executor type {}", name),
         };
         return executor;
     }
-    Box::new(DockerExecutor{})
+    Box::new(executor::docker::DockerExecutor{})
 }
 
 fn build_from_runtime(builder_name: Option<String>) -> Box<Builder> {
     if let Some(name) = builder_name {
         let builder : Box<Builder> = match name.as_ref() { 
-            "docker" => Box::new(DockerBuilder{}),
+            "docker" => Box::new(builder::docker::DockerBuilder{}),
             "fake" => Box::new(FakeBuilder{}),
             _ => panic!("Unsupported builder type {}", name),
         };
         builder
     } else {
-        Box::new(DockerBuilder{})
+        Box::new(builder::docker::DockerBuilder{})
     }
 }
 
