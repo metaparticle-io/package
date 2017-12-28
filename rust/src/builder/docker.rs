@@ -10,7 +10,7 @@ impl Builder for DockerBuilder {
     fn build(&self, dir: String, image: String) {
         let mut child = process::Command::new("docker")
             .arg("build")
-            .arg(image)
+            .arg("-t".to_string()+&image)
             .arg(dir)
             .spawn()
             .expect("failed to execute 'docker build'");

@@ -9,7 +9,6 @@ use std::env;
 use std::error::Error;
 use std::fs::File;
 use std::ffi::OsStr;
-use std::io;
 use std::io::prelude::*;
 use std::path::Path;
 
@@ -30,7 +29,7 @@ impl Default for Runtime {
             replicas: Some(1),
             shards: Some(2),
             url_shard_pattern: Some("something".to_string()),
-            executor: Some("exec".to_string()),
+            executor: Some("docker".to_string()),
             ports: Some(3),
             public_address: Some(false)
         }
@@ -54,7 +53,7 @@ impl Default for Package {
             repository: Some("repository".to_string()),
             verbose: Some(false), 
             quiet:  Some(false),
-            builder: Some("builder".to_string()),
+            builder: Some("docker".to_string()),
             publish: Some(false)
         }
     }
@@ -127,10 +126,10 @@ fn build_from_runtime(builder_name: Option<String>) -> Box<Builder> {
 }
 
 fn write_dockerfile(name: &str) {
-    let dockerfile = &b"FROM rust:latest
-    FOO
-    HELLO WORLD
-    "[..];
+    let dockerfile = &format!("FROM alpine:latest
+    COPY ./{name} /runtime/{name}
+    CMD /runtime/{name}
+    ", name=name);
     let path = Path::new("Dockerfile");
     let display = path.display();
 
@@ -141,20 +140,20 @@ fn write_dockerfile(name: &str) {
         Ok(file) => file,
     };
 
-    if let Err(why) = file.write_all(dockerfile) {
+    if let Err(why) = file.write_all(dockerfile.as_bytes()) {
         panic!("Could not write dockerfile at {} because {}", display, why.description());
     }
 }
 
 pub fn containerize<F>(f: F, runtime: Runtime, package: Package) where F: Fn() {
-    if(in_docker_container()) {
+    if in_docker_container() {
         f();
     } else {
+        write_dockerfile("hello"); //TODO: replace this
+        let builder = build_from_runtime(package.builder.clone());
+        builder.build(".".to_string(), "dummy".to_string());
+
         let executor = executor_from_runtime(runtime.executor.clone());
         executor.placeholder();
-
-        let builder = build_from_runtime(package.builder.clone());
-        builder.placeholder();
-        write_dockerfile("foo");
     }
 }
