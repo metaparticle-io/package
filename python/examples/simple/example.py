@@ -1,7 +1,7 @@
-from metaparticle import Containerize
+from metaparticle_pkg import Containerize
 
 
-@Containerize(package={'name': 'something', 'repository': 'repo'}, runtime={'ports': ['80', '8080']})
+@Containerize(package={'name': 'something', 'repository': 'repo'}, runtime={'ports': [80, 8080]})
 def container_with_port():
     print('hello container_with_port')
 

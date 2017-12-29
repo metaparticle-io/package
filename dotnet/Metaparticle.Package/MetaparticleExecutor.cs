@@ -80,5 +80,9 @@ namespace Metaparticle.Package {
             HandleErrorExec("mp-compiler", string.Format("-f {0}", specFileName));
             return name;
         }
+    
+        public bool PublishRequired() {
+            return true;
+        }
     }
 }

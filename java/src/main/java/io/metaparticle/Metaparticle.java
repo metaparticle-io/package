@@ -16,14 +16,18 @@ import static io.metaparticle.Util.once;
 public class Metaparticle {
 
     public static boolean inDockerContainer() {
-        switch (System.getenv("METAPARTICLE_IN_CONTAINER")) {
-            case "true":
-            case "1":
-                return true;
-            case "false":
-            case "0":
-                return false;
+        String envFlag = System.getenv("METAPARTICLE_IN_CONTAINER");
+        if (envFlag != null) {
+            switch (envFlag) {
+                case "true":
+                case "1":
+                    return true;
+                case "false":
+                case "0":
+                    return false;
+            }
         }
+
         File f = new File("/proc/1/cgroup");
         if (f.exists()) {
             try {
@@ -65,12 +69,16 @@ public class Metaparticle {
     }
 
     public static void writeDockerfile(String className, Package p, String projectName) throws IOException {
-        String contents = 
+        byte [] output;
+        if (p.dockerfile() == null || p.dockerfile().length() == 0) {
+            String contents = 
 "FROM openjdk:8-jre-alpine\n" +
 "COPY %s /main.jar\n" +
 "CMD java -classpath /main.jar %s";
-        byte[] output = 
-            String.format(contents, p.jarFile(), className).getBytes();
+            output = String.format(contents, p.jarFile(), className).getBytes();
+        } else {
+            output = Files.readAllBytes(Paths.get(p.dockerfile()));
+        }
         Files.write(Paths.get("Dockerfile"), output);
     }
 
@@ -112,13 +120,15 @@ public class Metaparticle {
 
                 writeDockerfile(className, p, "metaparticle-package");
 
-                handleErrorExec(new String[] {"mvn", "package"}, System.out, System.err);
-
-                builder.build(".", image, stdout, stderr);
-                builder.push(image, stdout, stderr);
+                if (p.build()) {
+                    handleErrorExec(new String[] {"mvn", "package"}, System.out, System.err);                    
+                    builder.build(".", image, stdout, stderr);
+                    if (p.publish()) {
+                        builder.push(image, stdout, stderr);
+                    }
+                }
 
                 Runnable cancel = once(() -> exec.cancel(name));
-
                 java.lang.Runtime.getRuntime().addShutdownHook(new Thread(cancel));
 
                 exec.run(image, name, r, stdout, stderr);
