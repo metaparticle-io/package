@@ -139,8 +139,7 @@ func Containerize(r *Runtime, p *Package, f func()) {
 			panic(fmt.Sprintf("Could not get a builder for this package: %v", err))
 		}
 
-		name := "web"
-		image := "test"
+		image := p.Name
 
 		if len(p.Repository) != 0 {
 			image = p.Repository + "/" + image
@@ -162,13 +161,13 @@ func Containerize(r *Runtime, p *Package, f func()) {
 			}
 		}
 
-		err = exec.Run(image, name, r, os.Stdout, os.Stderr)
+		err = exec.Run(image, p.Name, r, os.Stdout, os.Stderr)
 		if err != nil {
-			panic(fmt.Sprintf("Error executing the container: %v", err))
+			panic(fmt.Sprintf("Error running the container: %v", err))
 		}
 
 		go func() {
-			exec.Logs(name, os.Stdout, os.Stderr)
+			exec.Logs(p.Name, os.Stdout, os.Stderr)
 		}()
 
 		signalChan := make(chan os.Signal, 1)
@@ -177,7 +176,7 @@ func Containerize(r *Runtime, p *Package, f func()) {
 		go func() {
 			for _ = range signalChan {
 				fmt.Println("Received interrupt, stopping container...")
-				exec.Cancel(name)
+				exec.Cancel(p.Name)
 				cleanupDone <- true
 			}
 		}()
