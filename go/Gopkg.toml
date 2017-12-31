@@ -24,3 +24,8 @@
 [[constraint]]
   name = "github.com/metaparticle-io/metaparticle-ast"
   version = "0.2.0"
+
+# had to override this version because of https://github.com/golang/dep/issues/1415
+[[override]]
+  name = "github.com/docker/distribution"
+  revision = "f4118485915abb8b163442717326597908eee6aa"

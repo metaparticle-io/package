@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/signal"
+	"reflect"
 	"strings"
 )
 
@@ -29,43 +30,22 @@ type Runtime struct {
 	// Returns whether the service wants a public IP when deployed (usually involves the creation of a load balancer)
 	PublicAddress bool
 
-	// The ACI runtime config
-	AciConfig *AciRuntimeConfig
+	// Pointer to extra configuration needed by specific executors (e.g. AciRuntimeConfig)
+	ExtraConfig interface{}
 }
 
-// AciRuntimeConfig - runtime config for ACI executor.
-type AciRuntimeConfig struct {
-	// Azure tenant id.
-	AzureTenantID string
-
-	// Azure subscription id.
-	// Container instances will be created using the given subscription.
-	AzureSubscriptionID string
-
-	// Azure client id (aka. application id).
-	AzureClientID string
-
-	// Azure client secret (aka. application key).
-	// If specified, then will authenticate to Azure as service principal.
-	// And then no need to specify username/password.
-	AzureClientSecret string
-
-	// If client secret is not specified, use username and password.
-	Username string
-
-	// If client secret is not specified, use username and password.
-	Password string
-
-	// The resource group to create container instance.
-	AciResourceGroup string
-}
-
+// Package encapsulates the metadata needed to build the image
 type Package struct {
+	// Image name
+	Name string
+	// Image repository (e.g. quay.io/user)
 	Repository string
 	Verbose    bool
 	Quiet      bool
-	Builder    string
-	Publish    bool
+	// Image builder (e.g. docker)
+	Builder string
+	// Whether to publish the built image to the remote repository
+	Publish bool
 }
 
 // Executor implementors are container platforms where the containers can be deployed (e.g. Azure, GCP)
@@ -96,14 +76,17 @@ func inDockerContainer() bool {
 
 func executorFromRuntime(r *Runtime) (Executor, error) {
 	if r == nil {
-		return &DockerImpl{}, nil
+		return NewDockerImpl()
 	}
 	switch r.Executor {
 	case "docker":
-		return &DockerImpl{}, nil
+		return NewDockerImpl()
 	case "aci":
-		// TODO: find a way to parameterize the name of the resource group
-		return &ACIExecutor{"test"}, nil
+		aciConfig, ok := r.ExtraConfig.(*AciRuntimeConfig)
+		if !ok {
+			return nil, fmt.Errorf("Extra config not of AciRuntimeConfig type: %v", reflect.TypeOf(r.ExtraConfig))
+		}
+		return &ACIExecutor{aciConfig}, nil
 	case "metaparticle":
 		return &MetaparticleExecutor{}, nil
 	default:
@@ -113,11 +96,11 @@ func executorFromRuntime(r *Runtime) (Executor, error) {
 
 func builderFromPackage(pkg *Package) (Builder, error) {
 	if pkg == nil {
-		return &DockerImpl{}, nil
+		return NewDockerImpl()
 	}
 	switch pkg.Builder {
 	case "docker":
-		return &DockerImpl{}, nil
+		return NewDockerImpl()
 	default:
 		return nil, fmt.Errorf("Unknown builder: %s", pkg.Builder)
 	}
@@ -136,6 +119,11 @@ CMD ["go-wrapper", "run"]
 	return ioutil.WriteFile("Dockerfile", []byte(contents), 0644)
 }
 
+// Containerize receives a description of the runtime and metadata needed to build a container image,
+// and run it.
+//
+// When called inside the container, it runs the function f. When called outside the container, it builds
+// the container image and runs it in the specified runtime environment.
 func Containerize(r *Runtime, p *Package, f func()) {
 	if inDockerContainer() {
 		f()
