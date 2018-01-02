@@ -260,10 +260,10 @@ func (d *DockerImpl) Logs(name string, stdout io.Writer, stderr io.Writer) error
 	}
 	ctx := context.Background()
 	res, err := d.containerRunner.ContainerLogs(ctx, name, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true, Follow: true})
-	defer res.Close()
 	if err != nil {
 		return errors.Wrap(err, "Error getting container logs")
 	}
+	defer res.Close()
 
 	_, err = stdcopy.StdCopy(stdout, stderr, res)
 	return err
