@@ -6,7 +6,7 @@ For a quick summary, please see the [README](README.md).
 ## Initial Setup
 
 ### Check the tools
-The `docker` command line tool needs to be installed and working. Try:
+The `docker` daemon needs to be installed and working. Try:
 `docker ps` to verify this.  Go to the [install page](https://get.docker.io) if you need
 to install Docker.
 
