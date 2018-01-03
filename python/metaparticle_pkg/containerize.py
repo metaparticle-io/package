@@ -7,6 +7,7 @@ import metaparticle_pkg.option as option
 import metaparticle_pkg.builder as builder
 import metaparticle_pkg.runner as runner
 
+
 def is_in_docker_container():
     mp_in_container = os.getenv('METAPARTICLE_IN_CONTAINER', None)
     if mp_in_container in ['true', '1']:
@@ -30,7 +31,7 @@ def is_in_docker_container():
 
 
 def write_dockerfile(package, exec_file):
-    if package.dockerfile is not None:
+    if hasattr(package, 'dockerfile') and package.dockerfile is not None:
         shutil.copy(package.dockerfile, 'Dockerfile')
         return
 
@@ -49,7 +50,10 @@ class Containerize(object):
     def __init__(self, runtime={}, package={}):
         self.runtime = option.load(option.RuntimeOptions, runtime)
         self.package = option.load(option.PackageOptions, package)
-        self.image = "{repo}/{name}:latest".format(repo=self.package.repository, name=self.package.name)
+        self.image = "{repo}/{name}:latest".format(
+            repo=self.package.repository,
+            name=self.package.name
+        )
 
         self.builder = builder.select(self.package.builder)
         self.runner = runner.select(self.runtime.executor)
@@ -76,5 +80,6 @@ class Containerize(object):
             signal.signal(signal.SIGINT, signal_handler)
 
             self.runner.run(self.image, self.package.name, self.runtime)
-            return self.runner.logs(self.image)
+
+            return self.runner.logs(self.package.name)
         return wrapped
