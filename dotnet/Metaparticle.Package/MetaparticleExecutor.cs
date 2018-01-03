@@ -47,10 +47,10 @@ namespace Metaparticle.Package {
                 replicaSpec = string.Format(@"""replicas"": {0}", config.Replicas);
             }
 
-            var spec = @"{{
-    ""name"": ""{0}"",
-    ""guid"": 1234567, 
-    ""services"": [ 
+            string servicesSpec;
+            if (config.Shards > 0 || config.Replicas > 0) {
+                servicesSpec = @",
+            ""services"": [ 
         {{
                ""name"": ""{0}"",
             {1},
@@ -71,11 +71,41 @@ namespace Metaparticle.Package {
     ""serve"": {{
         ""name"": ""{0}"",
         ""public"": true
-    }}
+    }}";
+            } else {
+                servicesSpec = "";
+            }
+
+    string jobSpec;
+
+            if (config.JobCount > 0) {
+                jobSpec = @",
+                ""jobs"": [{{
+                    ""name"": {0},
+                    ""containers"": [
+                    {{
+                        ""image"": ""{1}"",
+                        ""env"": [{{
+                            ""name"": ""METAPARTICLE_IN_CONTAINER"",
+                            ""value"": ""true""
+                        }}]
+                    }}
+                }}]";
+            } else {
+                jobSpec = "";
+            }
+
+    var spec = @"{{
+    ""name"": ""{0}"",
+    ""guid"": 1234567
+    {}
+    {}
 }}";
             Directory.CreateDirectory(".metaparticle");
             var specFileName = Path.Combine(".metaparticle", "spec.json");
-            File.WriteAllText(specFileName, string.Format(spec, name, replicaSpec, image, config.Ports[0]));
+            var fullServiceSpec = string.Format(servicesSpec, replicaSpec, image, config.Ports[0]);
+            var fullJobSpec = string.Format(jobSpec, name, image);
+            File.WriteAllText(specFileName, string.Format(spec, name, fullServiceSpec, fullJobSpec));
 
             HandleErrorExec("mp-compiler", string.Format("-f {0}", specFileName));
             return name;
