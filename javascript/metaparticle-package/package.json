@@ -11,7 +11,7 @@
   ],
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "start": "node index.js"
   },
   "author": "Brendan Burns",
@@ -26,5 +26,9 @@
   "keywords": [
     "cloud",
     "containers"
-  ]
+  ],
+  "devDependencies": {
+    "mocha": "^4.1.0",
+    "sinon": "^4.1.3"
+  }
 }
