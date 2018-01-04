@@ -10,11 +10,7 @@ namespace simple {
         public static void Main(string[] args) => Containerize (args, () =>
         {
 			Console.Out.WriteLine(args);
-			int i = 0;
-            while (true) {
-				Console.WriteLine("Hello world " + (i++));
-				Thread.Sleep(10 * 1000);
-			}
+			Console.WriteLine("Hello world batch job!");
         });
     }
 }
