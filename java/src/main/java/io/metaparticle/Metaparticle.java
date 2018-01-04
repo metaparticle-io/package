@@ -99,11 +99,11 @@ public class Metaparticle {
             String className = traces[2].getClassName();
             String methodName = traces[2].getMethodName();
             
-            String name = "web";
-            String image = "test";
 
             try {
                 Class clazz = Class.forName(className);
+                String name = clazz.getCanonicalName().replace('.', '-').toLowerCase();
+                String image = name;
                 Method m = clazz.getMethod(methodName, String[].class);
                 Package p = m.getAnnotation(Package.class);
                 Runtime r = m.getAnnotation(Runtime.class);
