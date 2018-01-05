@@ -28,7 +28,7 @@
 
     writeDockerfile = (options) => {
         if (options.dockerfile) {
-            fs.copyFileSync(src, 'Dockerfile');
+            fs.copyFileSync(options.dockerfile, 'Dockerfile');
             return;
         }
         var name = options.name;
