@@ -1,4 +1,4 @@
-from metaparticle_pkg.builder.docker import DockerBuilder
+from metaparticle_pkg.builder.docker_builder import DockerBuilder
 def select(spec):
     if spec == 'docker':
         return DockerBuilder()
