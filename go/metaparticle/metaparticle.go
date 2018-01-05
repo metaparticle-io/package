@@ -111,9 +111,12 @@ func writeDockerfile(name string) error {
 WORKDIR /go/src/app
 COPY . .
 
-RUN go-wrapper download
+RUN go get -u github.com/golang/dep/cmd/dep
+
+RUN dep init
+
 RUN go-wrapper install
-	
+
 CMD ["go-wrapper", "run"]
 `
 	return ioutil.WriteFile("Dockerfile", []byte(contents), 0644)
