@@ -11,13 +11,14 @@ use std::fs::File;
 use std::ffi::OsStr;
 use std::io::prelude::*;
 use std::path::Path;
+use std::process;
 
 #[derive(Debug)]
 pub struct Runtime {
     pub replicas: Option<u64>,
     pub shards: Option<u64>,
     pub url_shard_pattern: Option<String>,
-    pub executor: Option<String>,
+    pub executor: String,
     pub ports: Option<u64>,
     pub public_address: Option<bool>,
 }
@@ -26,23 +27,23 @@ pub struct Runtime {
 impl Default for Runtime {
     fn default() -> Runtime {
         Runtime {
-            replicas: Some(1),
-            shards: Some(2),
+            replicas: None,
+            shards: None,
             url_shard_pattern: Some("something".to_string()),
-            executor: Some("docker".to_string()),
-            ports: Some(3),
+            executor: "docker".to_string(),
+            ports: None,
             public_address: Some(false)
         }
     }
 }
 
-
 #[derive(Debug)]
 pub struct Package {
-	pub repository: Option<String>,
+    pub name:       String,
+	pub repository: String,
 	pub verbose:    Option<bool>,
 	pub quiet:      Option<bool>,
-	pub builder:    Option<String>,
+	pub builder:    String,
 	pub publish:    Option<bool>,
 }
 
@@ -50,36 +51,32 @@ pub struct Package {
 impl Default for Package {
     fn default() -> Package {
         Package {
-            repository: Some("repository".to_string()),
+            name: "name".to_string(),
+            repository: "repository".to_string(),
             verbose: Some(false), 
             quiet:  Some(false),
-            builder: Some("docker".to_string()),
+            builder: "docker".to_string(),
             publish: Some(false)
         }
     }
 }
 
+pub fn run_docker_process(args: Vec<String>) {
+    let name = args[0].clone();
+    let mut child = process::Command::new("docker")
+        .args(&args)
+        .spawn()
+        .expect(&format!("failed to execute 'docker {name}'", name=name));
 
-struct FakeExecutor{}
+    let status = child.wait()
+        .ok().expect(&format!("couldn't wait for 'docker {name}'", name=name));
 
-
-impl Executor for FakeExecutor {
-    fn placeholder(&self) {
-        println!("Fake executor");
+    if !status.success() {
+        match status.code() {
+            Some(code) => panic!("'docker {}' failed with code {:?}", name, code),
+            None       => panic!("'docker {}' failed", name)
+        }
     }
-    fn run(&self, image: String, name: String, config: Runtime) {}
-}
-
-struct FakeBuilder{}
-
-impl Builder for FakeBuilder {
-    fn placeholder(&self) {
-        println!("Fake builder!");
-    }
-    fn build(&self, dir: String, image: String) {}
-    fn push(&self, image: String) {}
-    fn logs(&self, name: String) {}
-    fn cancel(&self, name: String) {}
 }
 
 fn in_docker_container() -> bool {
@@ -90,7 +87,6 @@ fn in_docker_container() -> bool {
     }
 
     let mut buffer  = String::with_capacity(256); // kind of a guess on initial capacity
-    let mut file_result =  File::open("/proc/1/cgroup");
 
     if let Ok(mut file) = File::open("/proc/1/cgroup") {
         if let Ok(_) = file.read_to_string(&mut buffer) {
@@ -100,35 +96,27 @@ fn in_docker_container() -> bool {
     false
 }
 
-fn executor_from_runtime(executor_name: Option<String>) -> Box<Executor> {
-    if let Some(name) = executor_name {
-        let executor : Box<Executor> = match name.as_ref() {
-            "docker" => Box::new(executor::docker::DockerExecutor{}),
-            "fake" => Box::new(FakeExecutor{}),
-            _ => panic!("Unsupported executor type {}", name),
-        };
-        return executor;
-    }
-    Box::new(executor::docker::DockerExecutor{})
+fn executor_from_runtime(executor_name: String) -> Box<Executor> {
+    let executor : Box<Executor> = match executor_name.as_ref() {
+        "docker" => Box::new(executor::docker::DockerExecutor{}),
+        _ => panic!("Unsupported executor type {}", executor_name),
+    };
+    return executor;
 }
 
-fn build_from_runtime(builder_name: Option<String>) -> Box<Builder> {
-    if let Some(name) = builder_name {
-        let builder : Box<Builder> = match name.as_ref() { 
-            "docker" => Box::new(builder::docker::DockerBuilder{}),
-            "fake" => Box::new(FakeBuilder{}),
-            _ => panic!("Unsupported builder type {}", name),
-        };
-        builder
-    } else {
-        Box::new(builder::docker::DockerBuilder{})
-    }
+fn build_from_runtime(builder_name: String) -> Box<Builder> {
+    let builder : Box<Builder> = match builder_name.as_ref() { 
+        "docker" => Box::new(builder::docker::DockerBuilder{}),
+        _ => panic!("Unsupported builder type {}", builder_name),
+    };
+    builder
+
 }
 
 fn write_dockerfile(name: &str) {
-    let dockerfile = &format!("FROM alpine:latest
-    COPY ./{name} /runtime/{name}
-    CMD /runtime/{name}
+    let dockerfile = &format!("FROM ubuntu:16.04
+    COPY ./{name} /tmp/{name}
+    CMD /tmp/{name}
     ", name=name);
     let path = Path::new("Dockerfile");
     let display = path.display();
@@ -149,11 +137,14 @@ pub fn containerize<F>(f: F, runtime: Runtime, package: Package) where F: Fn() {
     if in_docker_container() {
         f();
     } else {
-        write_dockerfile("hello"); //TODO: replace this
+        let image = &format!("{repo}/{name}:latest", repo=package.repository, name=package.name);
+        
+        write_dockerfile(&package.name);
         let builder = build_from_runtime(package.builder.clone());
-        builder.build(".".to_string(), "dummy".to_string());
+        builder.build(".".to_string(), image.clone());
 
         let executor = executor_from_runtime(runtime.executor.clone());
-        executor.placeholder();
+        executor.run(image.clone(), package.name.clone(), runtime);
+        executor.logs(package.name.clone());
     }
 }
