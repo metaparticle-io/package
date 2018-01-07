@@ -1,23 +1,52 @@
 package metaparticle
 
-import "io"
-import "os/exec"
-import "time"
-import "fmt"
+import (
+	"fmt"
+	"io"
+	"os/exec"
+	"time"
+)
+
+// AciRuntimeConfig - runtime config for ACI executor.
+type AciRuntimeConfig struct {
+	// Azure tenant id.
+	AzureTenantID string
+
+	// Azure subscription id.
+	// Container instances will be created using the given subscription.
+	AzureSubscriptionID string
+
+	// Azure client id (aka. application id).
+	AzureClientID string
+
+	// Azure client secret (aka. application key).
+	// If specified, then will authenticate to Azure as service principal.
+	// And then no need to specify username/password.
+	AzureClientSecret string
+
+	// If client secret is not specified, use username and password.
+	Username string
+
+	// If client secret is not specified, use username and password.
+	Password string
+
+	// The resource group to create container instance.
+	ResourceGroup string
+}
 
 // ACIExecutor implements and executor on Azure Container Engine
 type ACIExecutor struct {
-	ResourceGroup string
+	config *AciRuntimeConfig
 }
 
 // Run creates a container on the azure executor's resource group using the given image and name
 func (a *ACIExecutor) Run(image string, name string, cfg *Runtime, stdout io.Writer, stderr io.Writer) error {
 	if len(image) == 0 {
-		return fmt.Errorf("An image must be specified")
+		return errEmptyImageName
 	}
 
 	if len(name) == 0 {
-		return fmt.Errorf("The container's name must be specified")
+		return errEmptyContainerName
 	}
 
 	if cfg == nil {
@@ -25,7 +54,7 @@ func (a *ACIExecutor) Run(image string, name string, cfg *Runtime, stdout io.Wri
 	}
 
 	cmdName := "az"
-	cmdParams := []string{"container", "create", "--image", image, "-g", a.ResourceGroup, "-n", name, "--env=METAPARTICLE_IN_CONTAINER=true"}
+	cmdParams := []string{"container", "create", "--image", image, "-g", a.config.ResourceGroup, "-n", name, "--env=METAPARTICLE_IN_CONTAINER=true"}
 
 	for _, port := range cfg.Ports {
 		cmdParams = append(cmdParams, "--port="+string(port))
@@ -47,7 +76,7 @@ func (a *ACIExecutor) Logs(name string, stdout io.Writer, stderr io.Writer) erro
 	if len(name) == 0 {
 		return fmt.Errorf("A container name must be specified")
 	}
-	cmd := exec.Command("az", "container", "logs", "-g", a.ResourceGroup, "-n", name)
+	cmd := exec.Command("az", "container", "logs", "-g", a.config.ResourceGroup, "-n", name)
 	cmd.Stderr = stderr
 	cmd.Stdout = stdout
 	err := cmd.Run()
@@ -62,6 +91,6 @@ func (a *ACIExecutor) Logs(name string, stdout io.Writer, stderr io.Writer) erro
 
 // Cancel deletes the container with the given name on the executor's resource group
 func (a *ACIExecutor) Cancel(name string) error {
-	cmd := exec.Command("az", "container", "delete", "-g", a.ResourceGroup, "-n", name, "--yes")
+	cmd := exec.Command("az", "container", "delete", "-g", a.config.ResourceGroup, "-n", name, "--yes")
 	return cmd.Run()
 }

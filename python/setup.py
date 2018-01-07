@@ -1,5 +1,4 @@
 import setuptools
-import os
 
 exec(open('./metaparticle_pkg/version.py').read())
 
@@ -14,7 +13,7 @@ setuptools.setup(
     package_data={},
     include_package_data=False,
     zip_safe=False,
-    install_requires=[],
+    install_requires=['docker==2.7.0'],
     platforms='linux',
     keywords=['kubernetes', 'docker', 'container', 'metaparticle'],
     # latest from https://pypi.python.org/pypi?%3Aaction=list_classifiers

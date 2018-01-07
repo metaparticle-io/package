@@ -1,5 +1,5 @@
 
-rticle/Package for JavaScript
+# Metaparticle/Package for JavaScript
 Metaparticle/Package is a collection of libraries intended to 
 make building and deploying containers a seamless and idiomatic
 experience for developers.
