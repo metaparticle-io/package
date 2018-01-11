@@ -13,7 +13,7 @@ var port int32 = 8080
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	hostname, _ := os.Hostname()
-	fmt.Fprintf(w, "Hello metaparticle from %s!", r.RequestURI, hostname)
+	fmt.Fprintf(w, "Hello metaparticle from %s %s!\n", r.RequestURI, hostname)
 }
 
 func main() {
