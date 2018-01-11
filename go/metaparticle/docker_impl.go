@@ -2,9 +2,11 @@ package metaparticle
 
 import (
 	"archive/tar"
+	"bufio"
 	"compress/gzip"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -128,14 +130,23 @@ func printStreamResponse(body io.ReadCloser, out io.Writer) error {
 	var line struct {
 		Stream string `json:"stream"`
 	}
-	decoder := json.NewDecoder(body)
-	for {
+	/*decoder := json.NewDecoder(body)
+	for decoder.More() {
 		err := decoder.Decode(&line)
 		if err != nil {
-			if err != io.EOF {
-				return err
-			}
-			break
+			return err
+		}
+		out.Write([]byte("foo!"))
+		out.Write([]byte(line.Stream))
+	}
+	return nil
+	*/
+	defer body.Close()
+
+	scanner := bufio.NewScanner(body)
+	for scanner.Scan() {
+		if err := json.Unmarshal(scanner.Bytes(), &line); err != nil {
+			return err
 		}
 		out.Write([]byte(line.Stream))
 	}
@@ -171,6 +182,7 @@ func (d *DockerImpl) Build(dir string, image string, stdout io.Writer, stderr io
 	ctx := context.Background()
 	res, err := d.imageClient.ImageBuild(ctx, tarfile, types.ImageBuildOptions{Tags: []string{image}})
 	if err != nil {
+		fmt.Printf("%s: %#v\n", image, err)
 		return errors.Wrap(err, "Error sending build request to docker")
 	}
 
