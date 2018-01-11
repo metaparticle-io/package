@@ -6,12 +6,13 @@ import com.microsoft.rest.serializer.JacksonAdapter;
 import io.metaparticle.annotations.Runtime;
 import io.metaparticle.models.Container;
 import io.metaparticle.models.EnvVar;
+import io.metaparticle.models.JobSpecification;
 import io.metaparticle.models.Service;
 import io.metaparticle.models.ServicePort;
 import io.metaparticle.models.ServeSpecification;
 import io.metaparticle.models.ServiceSpecification;
-import java.io.IOException;
 import io.metaparticle.models.ShardSpecification;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -97,12 +98,32 @@ public class MetaparticleExecutor implements Executor {
         return s;
     }
 
+    public io.metaparticle.models.Service addJob(io.metaparticle.models.Service s, String image, String name, Runtime config) {
+        List<Container> containerList = new ArrayList<>();
+        containerList.add(new Container().withImage(image));
+    
+        List<JobSpecification> jobsList = new ArrayList<>();
+        jobsList.add(new JobSpecification()
+            .withName(name)
+            .withReplicas(config.iterations())
+            .withContainers(containerList)
+        );
+        return s.withJobs(jobsList);
+    }
+
     public boolean run(String image, String name, Runtime config, OutputStream stdout, OutputStream stderr) {
         Service s;
         if (config.shards() > 0) {
             s = makeShardedService(image, name, config);
-        } else {
+        } else if (config.replicas() > 0) {
             s = makeReplicatedService(image, name, config);
+        } else {
+            s = new Service()
+            .withName(name)
+            .withGuid(1234567);
+        }
+        if (config.iterations() > 0) {
+            s = addJob(s, image, name, config);
         }
 
         try {

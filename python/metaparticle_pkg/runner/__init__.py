@@ -1,4 +1,4 @@
-from metaparticle_pkg.runner.docker import DockerRunner
+from metaparticle_pkg.runner.docker_runner import DockerRunner
 from metaparticle_pkg.runner.metaparticle import MetaparticleRunner
 
 def select(spec):

@@ -21,8 +21,11 @@ class MetaparticleRunner:
     def run(self, img, name, options):
         svc =  {
             "name": name,
-            "guid": 1234567, 
-            "services": [ 
+            "guid": 1234567,
+        }
+
+        if options.replicas > 0 or options.shardSpec is not None:
+            svc["services"] = [ 
                 {
                     "name": name,
                     "replicas": options.replicas,
@@ -32,11 +35,22 @@ class MetaparticleRunner:
                     ],
                     "ports": self.ports(options.ports)
                 }
-            ],
-            "serve": {
+            ]
+            svc["serve"] = {
                 "name": name,
             }
-        }
+
+        if options.jobSpec is not None:
+            svc["jobs"] = [
+                {
+                    "name": name,
+                    "replicas": options.jobSpec['iterations'],
+                    "containers": [
+                        { "image": img }
+                    ]
+                }
+            ]
+
         if not os.path.exists('.metaparticle'):
             os.makedirs('.metaparticle')
 

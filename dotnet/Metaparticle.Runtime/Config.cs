@@ -4,6 +4,8 @@ namespace Metaparticle.Runtime {
 
         public int Shards { get; set; }
 
+        public int JobCount { get; set; }
+
         public string ShardExpression { get; set; }
 
         public string Executor { get; set; }

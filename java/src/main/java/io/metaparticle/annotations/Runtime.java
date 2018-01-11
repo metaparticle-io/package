@@ -5,9 +5,11 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Runtime {
-    public int replicas() default 1;
+    public int replicas() default 0;
 
     public int shards() default 0;
+
+    public int iterations() default 0;
 
     public String urlShardPattern() default "";
 

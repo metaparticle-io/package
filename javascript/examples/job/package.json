@@ -1,0 +1,15 @@
+{
+    "name": "job",
+    "version": "1.0.0",
+    "description": "Simple batch job example",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node index.js"
+    },
+    "author": "Brendan Burns",
+    "license": "MIT",
+    "dependencies": {
+        "@metaparticle/package": "file:../../metaparticle-package/metaparticle-package-0.2.0.tgz"
+    }
+}
