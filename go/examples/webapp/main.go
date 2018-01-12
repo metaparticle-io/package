@@ -20,11 +20,16 @@ func main() {
 	metaparticle.Containerize(
 		&metaparticle.Runtime{
 			Ports:    []int32{port},
-			Executor: "docker"},
-		&metaparticle.Package{Name: "metaparticle-web-demo",
-			Repository: "xfernando",
+			Executor: "metaparticle",
+			Replicas: 3,
+		},
+		&metaparticle.Package{
+			Name:       "metaparticle-web-demo",
+			Repository: "brendanburns",
 			Builder:    "docker",
-			Verbose:    true},
+			Verbose:    true,
+			Publish:    true,
+		},
 		func() {
 			log.Println("Starting server on :8080")
 			http.HandleFunc("/", handler)
