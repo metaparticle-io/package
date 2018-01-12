@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
+	"path"
 
 	"github.com/go-openapi/swag"
 	"github.com/metaparticle-io/metaparticle-ast/models"
@@ -89,12 +89,16 @@ func (m *MetaparticleExecutor) Run(image string, name string, config *Runtime, s
 		return fmt.Errorf("Could not create service json: %v", err)
 	}
 
-	specJSONFile, err := ioutil.TempFile("", "spec.json")
-	if err != nil {
-		return fmt.Errorf("Could not create temporary service json file: %v", err)
+	if err := os.Mkdir(".metaparticle", 0755); err != nil {
+		if !os.IsExist(err) {
+			return err
+		}
 	}
-
-	defer os.Remove(specJSONFile.Name())
+	specJSON := path.Join(".metaparticle", "spec.json")
+	specJSONFile, err := os.OpenFile(specJSON, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0755)
+	if err != nil {
+		return fmt.Errorf("Could not create service json file: %v", err)
+	}
 
 	if _, err := specJSONFile.Write(serviceJSON); err != nil {
 		return fmt.Errorf("Coult not write to temporary service json file")
@@ -103,7 +107,7 @@ func (m *MetaparticleExecutor) Run(image string, name string, config *Runtime, s
 		return fmt.Errorf("Could not close temporary service json file")
 	}
 
-	m.SpecPath = specJSONFile.Name()
+	m.SpecPath = specJSON
 
 	cmd := exec.Command("mp-compiler", "-f", specJSONFile.Name())
 	cmd.Stderr = stderr

@@ -10,6 +10,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -198,19 +199,11 @@ func (d *DockerImpl) Push(image string, stdout io.Writer, stderr io.Writer) erro
 	if len(image) == 0 {
 		return errEmptyImageName
 	}
-	ctx := context.Background()
-	res, err := d.imageClient.ImagePush(ctx, image, types.ImagePushOptions{})
-	if res != nil {
-		defer res.Close()
-	}
-	if err != nil {
-		return errors.Wrap(err, "Error sending push request to docker")
-	}
-	if err = printStreamResponse(res, stdout); err != nil {
-		return errors.Wrap(err, "Error reading push output from docker")
-	}
-
-	return nil
+	// TODO: Figure out auth and use the docker client library here
+	cmd := exec.Command("docker", "push", image)
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
+	return cmd.Run()
 }
 
 func parsePorts(ports []int32) (nat.PortMap, nat.PortSet, error) {
