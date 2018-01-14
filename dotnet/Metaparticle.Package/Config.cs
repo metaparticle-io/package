@@ -18,6 +18,18 @@ namespace Metaparticle.Package {
 
         public Config() {
             Builder = "docker";
+            LoadConfigVariablesFromEnvironment();
+        }
+
+        private void LoadConfigVariablesFromEnvironment()
+        {
+            Repository = TryGetEnvironmentVariable("MP_CONFIG_REPOSITORY");
+            Publish = TryGetEnvironmentVariable("MP_CONFIG_PUBLISH").ToLower() == "true";
+        }
+
+        private string TryGetEnvironmentVariable(string name)
+        {
+            return Environment.GetEnvironmentVariable(name) ?? "";
         }
     }
 }
