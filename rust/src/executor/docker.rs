@@ -2,6 +2,8 @@ use super::run_docker_process;
 use super::Runtime;
 use Executor;
 
+use std::iter::Iterator;
+
 pub struct DockerExecutor{}
 
 impl Executor for DockerExecutor {
@@ -15,12 +17,21 @@ impl Executor for DockerExecutor {
     }
 
     fn run(&self, image: &str, name: &str, config: Runtime) {
-        let mut args = vec!["run", "-d", "--name", name];
+        let mut args = vec![ "run".to_string(),
+            "-d".to_string(),
+            "--name".to_string(), 
+            name.to_string()];
+
         if let Some(port) = config.ports {
-            args.extend(vec!["-p",&*format!("-p{}", port)]);
+            args.push(format!("-p {}", port));
         }
-        args.extend(vec![image]);
-        run_docker_process(args);
+
+        args.push(image.to_string());
+        let args_refs = args.iter()
+                .map(|a| a.as_ref())
+                .collect();
+
+        run_docker_process(args_refs);
     }
 }
 
