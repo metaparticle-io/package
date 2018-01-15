@@ -2,12 +2,15 @@ package metaparticle
 
 import (
 	"archive/tar"
+	"bufio"
 	"compress/gzip"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -128,14 +131,23 @@ func printStreamResponse(body io.ReadCloser, out io.Writer) error {
 	var line struct {
 		Stream string `json:"stream"`
 	}
-	decoder := json.NewDecoder(body)
-	for {
+	/*decoder := json.NewDecoder(body)
+	for decoder.More() {
 		err := decoder.Decode(&line)
 		if err != nil {
-			if err != io.EOF {
-				return err
-			}
-			break
+			return err
+		}
+		out.Write([]byte("foo!"))
+		out.Write([]byte(line.Stream))
+	}
+	return nil
+	*/
+	defer body.Close()
+
+	scanner := bufio.NewScanner(body)
+	for scanner.Scan() {
+		if err := json.Unmarshal(scanner.Bytes(), &line); err != nil {
+			return err
 		}
 		out.Write([]byte(line.Stream))
 	}
@@ -171,6 +183,7 @@ func (d *DockerImpl) Build(dir string, image string, stdout io.Writer, stderr io
 	ctx := context.Background()
 	res, err := d.imageClient.ImageBuild(ctx, tarfile, types.ImageBuildOptions{Tags: []string{image}})
 	if err != nil {
+		fmt.Printf("%s: %#v\n", image, err)
 		return errors.Wrap(err, "Error sending build request to docker")
 	}
 
@@ -186,19 +199,11 @@ func (d *DockerImpl) Push(image string, stdout io.Writer, stderr io.Writer) erro
 	if len(image) == 0 {
 		return errEmptyImageName
 	}
-	ctx := context.Background()
-	res, err := d.imageClient.ImagePush(ctx, image, types.ImagePushOptions{})
-	if res != nil {
-		defer res.Close()
-	}
-	if err != nil {
-		return errors.Wrap(err, "Error sending push request to docker")
-	}
-	if err = printStreamResponse(res, stdout); err != nil {
-		return errors.Wrap(err, "Error reading push output from docker")
-	}
-
-	return nil
+	// TODO: Figure out auth and use the docker client library here
+	cmd := exec.Command("docker", "push", image)
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
+	return cmd.Run()
 }
 
 func parsePorts(ports []int32) (nat.PortMap, nat.PortSet, error) {

@@ -13,18 +13,23 @@ var port int32 = 8080
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	hostname, _ := os.Hostname()
-	fmt.Fprintf(w, "Hello metaparticle from %s!", r.RequestURI, hostname)
+	fmt.Fprintf(w, "Hello metaparticle from %s %s!\n", r.RequestURI, hostname)
 }
 
 func main() {
 	metaparticle.Containerize(
 		&metaparticle.Runtime{
 			Ports:    []int32{port},
-			Executor: "docker"},
-		&metaparticle.Package{Name: "metaparticle-web-demo",
-			Repository: "xfernando",
+			Executor: "metaparticle",
+			Replicas: 3,
+		},
+		&metaparticle.Package{
+			Name:       "metaparticle-web-demo",
+			Repository: "brendanburns",
 			Builder:    "docker",
-			Verbose:    true},
+			Verbose:    true,
+			Publish:    true,
+		},
 		func() {
 			log.Println("Starting server on :8080")
 			http.HandleFunc("/", handler)

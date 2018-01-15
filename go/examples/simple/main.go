@@ -9,9 +9,13 @@ import (
 func main() {
 	metaparticle.Containerize(
 		&metaparticle.Runtime{
-			Executor: "docker"},
-		&metaparticle.Package{Repository: "xfernando",
-			Builder: "docker"},
+			Executor: "docker",
+		},
+		&metaparticle.Package{
+			Repository: "brendanburns",
+			Name:       "go-simple",
+			Builder:    "docker",
+		},
 		func() {
 			fmt.Println("Hello World")
 		})

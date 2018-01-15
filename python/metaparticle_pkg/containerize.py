@@ -75,7 +75,7 @@ class Containerize(object):
                 self.builder.publish(self.image)
 
             def signal_handler(signal, frame):
-                self.runner.cancel(self.image)
+                self.runner.cancel(self.package.name)
                 sys.exit(0)
             signal.signal(signal.SIGINT, signal_handler)
 
