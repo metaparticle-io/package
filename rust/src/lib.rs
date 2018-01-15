@@ -61,7 +61,7 @@ impl Default for Package {
     }
 }
 
-pub fn run_docker_process(args: Vec<String>) {
+pub fn run_docker_process(args: Vec<&str>) {
     let name = args[0].clone();
     let mut child = process::Command::new("docker")
         .args(&args)
@@ -141,10 +141,10 @@ pub fn containerize<F>(f: F, runtime: Runtime, package: Package) where F: Fn() {
         
         write_dockerfile(&package.name);
         let builder = build_from_runtime(package.builder.clone());
-        builder.build(".".to_string(), image.clone());
+        builder.build(".", image);
 
         let executor = executor_from_runtime(runtime.executor.clone());
-        executor.run(image.clone(), package.name.clone(), runtime);
-        executor.logs(package.name.clone());
+        executor.run(image, &package.name, runtime);
+        executor.logs(&package.name);
     }
 }

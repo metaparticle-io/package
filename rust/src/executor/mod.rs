@@ -3,7 +3,7 @@ use super::Runtime;
 use super::run_docker_process;
 
 pub trait Executor {
-    fn cancel(&self, name: String);
-    fn logs(&self, name: String);
-    fn run(&self, image: String, name: String, config: Runtime);
+    fn cancel(&self, name: &str);
+    fn logs(&self, name: &str);
+    fn run(&self, image: &str, name: &str, config: Runtime);
 }
