@@ -44,5 +44,17 @@ You can then compile this application just as you have before.
 But now, when you run the application, instead of printing "Hello world", it first packages itself as a container, and
 then (optionally) deploys itself inside that container.
 
+### Environment variables
+
+You can set some of the config attributes through environment variables so that it can be controlled from outside of the source code. This could be useful for CICD scenarios.
+
+E.g. 
+
+```
+set MP_CONFIG_REPOSITORY=docker.io/myrepo/myimagename:sometag
+```
+
+This will set the `Repository` property that you would otherwise set in the attributes. See `Config.cs` for supported environment variable overrides.
+
 ## Tutorial
 For a more complete exploration of the Metaparticle/Package for .NET Core, please see the [in-depth tutorial](../tutorials/dotnet/tutorial.md).
