@@ -56,5 +56,20 @@ set MP_CONFIG_REPOSITORY=docker.io/myrepo/myimagename:sometag
 
 This will set the `Repository` property that you would otherwise set in the attributes. See `Config.cs` for supported environment variable overrides.
 
+### Tests
+If you wish to add some test project to your metaparticle that get run as part of the build pipeline, you can add the tests projects as a CSV to an environment variable.
+
+```
+set METAPARTICLE_TESTS_CSV=../relpath/project1,../relpath2/project2
+```
+
+You can test this using the following example
+
+```
+set METAPARTICLE_TESTS_CSV=../simple-test
+cd examples/simple
+dotnet run
+```
+
 ## Tutorial
 For a more complete exploration of the Metaparticle/Package for .NET Core, please see the [in-depth tutorial](../tutorials/dotnet/tutorial.md).

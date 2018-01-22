@@ -15,9 +15,14 @@ namespace simple
             Console.Out.WriteLine(args);
             int i = 0;
             while (true) {
-                Console.WriteLine("Hello world " + (i++));
+                Console.WriteLine($"{Concatenate("Hello", " world")} " + (i++));
                 Thread.Sleep(10 * 1000);
             }
         });
+
+        public static string Concatenate(string one, string two)
+        {
+            return $"{one}{two}";
+        }
     }
 }

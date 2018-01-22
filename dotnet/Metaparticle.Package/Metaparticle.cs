@@ -6,6 +6,7 @@ using System.Text;
 using dockerfile;
 using static Metaparticle.Package.Util;
 using RuntimeConfig = Metaparticle.Runtime.Config;
+using Metaparticle.Package.Testing;
 
 namespace Metaparticle.Package
 {
@@ -68,6 +69,8 @@ namespace Metaparticle.Package
             TextWriter e = config.Quiet ? Console.Error : null;
             if (procName == "dotnet")
             {
+                RunTests();
+
                 dir = "bin/release/netcoreapp2.0/debian.8-x64/publish";
                 Exec("dotnet", "publish -r debian.8-x64 -c release", stdout: o, stderr: e);
                 //var dirInfo = new UnixDirectoryInfo(dir);
@@ -123,6 +126,16 @@ namespace Metaparticle.Package
 
             exec.Logs(id, Console.Out, Console.Error);
         }
+
+        private void RunTests()
+        {
+            var testsAsCsv = System.Environment.GetEnvironmentVariable("METAPARTICLE_TESTS_CSV");
+            var runTestsResult = new DotnetTestRunner().Run(testsAsCsv.Split(','));
+            if (runTestsResult == false)
+            {
+                throw new Exception("Tests Failed.");   
+            }
+        } 
 
         private string writeDockerfile(string dir, string exe, string[] args, Config config)
         {
