@@ -1,7 +1,9 @@
 using System;
 
-namespace Metaparticle.Package {
-    public class Config : Attribute {
+namespace Metaparticle.Package
+{
+    public class Config : Attribute
+    {
         public bool Verbose { get; set; }
 
         public bool Quiet { get; set; }
@@ -16,15 +18,16 @@ namespace Metaparticle.Package {
 
         public string Dockerfile { get; set; }
 
-        public Config() {
+        public Config()
+        {
             Builder = "docker";
             LoadConfigVariablesFromEnvironment();
         }
 
         private void LoadConfigVariablesFromEnvironment()
         {
-            Repository = TryGetEnvironmentVariable("MP_CONFIG_REPOSITORY");
-            Publish = TryGetEnvironmentVariable("MP_CONFIG_PUBLISH").ToLower() == "true";
+            Repository = TryGetEnvironmentVariable("METAPARTICLE_CONFIG_REPOSITORY");
+            Publish = TryGetEnvironmentVariable("METAPARTICLE_CONFIG_PUBLISH").ToLower() == "true";
         }
 
         private string TryGetEnvironmentVariable(string name)
