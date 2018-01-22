@@ -41,6 +41,7 @@ Currently:
    * [.NET core](dotnet)
    * [javascript](javascript) (NodeJS)
    * [go](go)
+   * [python](python)
    * [ruby](ruby)
 
 But it's fairly straightforward to add other languages, we would love to see contributions.
@@ -51,6 +52,8 @@ For more details see the more complete walkthroughs for each language:
    * [java tutorial](tutorials/java/tutorial.md)
    * [.NET Core tutorial](tutorials/dotnet/tutorial.md)
    * [javascript tutorial](tutorials/javascript/tutorial.md)
+   * [python tutorial](tutorials/python/tutorial.md)
+   * [go tutorial](tutorials/go/tutorial.md)
    * [Ruby tutorial](tutorials/ruby/tutorial.md)
 
 ## Operation
