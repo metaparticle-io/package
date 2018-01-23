@@ -15,3 +15,13 @@ matrix:
         - npm install
       script:
         - npm test
+
+  include:
+    - language: csharp
+    - sudo: required
+    - env:
+      - CLI_VERSION=latest
+    - os:
+      - linux
+    - script:
+      ./build.sh
