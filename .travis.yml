@@ -19,10 +19,8 @@ matrix:
   include:
     - language: csharp
       sudo: required
-      env:
-        - CLI_VERSION=latest
-      os:
-        - linux
+      dotnet: 2.0.0
+      mono: none
       before_script:
         - cd dotnet
       script:
