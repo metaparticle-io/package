@@ -18,10 +18,12 @@ matrix:
 
   include:
     - language: csharp
-    - sudo: required
-    - env:
-      - CLI_VERSION=latest
-    - os:
-      - linux
-    - script:
-      - ./build.sh
+      sudo: required
+      env:
+        - CLI_VERSION=latest
+      os:
+        - linux
+      before_script:
+        - cd dotnet
+      script:
+        - ./build.sh
