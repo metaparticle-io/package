@@ -24,4 +24,4 @@ matrix:
     - os:
       - linux
     - script:
-      ./build.sh
+      - ./build.sh
