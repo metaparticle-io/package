@@ -23,5 +23,6 @@ matrix:
       mono: none
       before_script:
         - cd dotnet
+        - ls
       script:
         - ./build.sh
