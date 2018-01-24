@@ -6,7 +6,7 @@ matrix:
     install:
     - pip install -r python/requirements.txt
     script:
-    - pytest
+    - python3 -m pytest --cov=. --cov-report=term-missing:skip-covered
   - language: node_js
     node_js: 8
     before_script:
