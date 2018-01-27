@@ -29,7 +29,7 @@ impl Default for Runtime {
         Runtime {
             replicas: None,
             shards: None,
-            url_shard_pattern: Some("something".to_string()),
+            url_shard_pattern: Some("".to_string()),
             executor: "docker".to_string(),
             ports: None,
             public_address: Some(false)
@@ -51,8 +51,8 @@ pub struct Package {
 impl Default for Package {
     fn default() -> Package {
         Package {
-            name: "name".to_string(),
-            repository: "repository".to_string(),
+            name: "".to_string(),
+            repository: "".to_string(),
             verbose: Some(false), 
             quiet:  Some(false),
             builder: "docker".to_string(),
@@ -137,6 +137,13 @@ pub fn containerize<F>(f: F, runtime: Runtime, package: Package) where F: Fn() {
     if in_docker_container() {
         f();
     } else {
+
+        if package.repository.len() == 0 {
+            panic!("A package must be given a 'repository' value");
+        }
+        if package.name.len() == 0 {
+            panic!("A package must be given a 'name' value");
+        }
         let image = &format!("{repo}/{name}:latest", repo=package.repository, name=package.name);
         
         write_dockerfile(&package.name);

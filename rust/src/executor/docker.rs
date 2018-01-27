@@ -19,11 +19,12 @@ impl Executor for DockerExecutor {
     fn run(&self, image: &str, name: &str, config: Runtime) {
         let mut args = vec![ "run".to_string(),
             "-d".to_string(),
+            "--rm".to_string(), 
             "--name".to_string(), 
             name.to_string()];
 
         if let Some(port) = config.ports {
-            args.push(format!("-p {}", port));
+            args.push(format!("-p {port}", port=port));
         }
 
         args.push(image.to_string());
