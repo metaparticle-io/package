@@ -51,7 +51,7 @@ You can set some of the config attributes through environment variables so that 
 E.g. 
 
 ```
-set MP_CONFIG_REPOSITORY=docker.io/myrepo/myimagename:sometag
+set METAPARTICLE_CONFIG_REPOSITORY=docker.io/myrepo/myimagename:sometag
 ```
 
 This will set the `Repository` property that you would otherwise set in the attributes. See `Config.cs` for supported environment variable overrides.
