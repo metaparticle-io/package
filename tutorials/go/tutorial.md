@@ -62,7 +62,7 @@ build file, and then update the code.
 
 Run:
 ```sh
-$ go get https://github.com/metaparticle-io/package/go/metaparticle
+$ go get github.com/metaparticle-io/package/go/metaparticle
 ```
 
 Then update the code to read as follows:
