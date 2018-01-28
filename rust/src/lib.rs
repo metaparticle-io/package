@@ -141,7 +141,12 @@ pub fn containerize<F>(f: F, runtime: Runtime, package: Package) where F: Fn() {
         
         write_dockerfile(&package.name);
         let builder = build_from_runtime(package.builder.clone());
-        builder.build(".", image);
+
+        let arg_0 = env::args().nth(0).unwrap();
+        let path = Path::new(&arg_0);
+        let docker_context = Path::new(path.parent().unwrap());
+
+        builder.build(docker_context.to_str().unwrap(), image);
 
         let executor = executor_from_runtime(runtime.executor.clone());
         executor.run(image, &package.name, runtime);
