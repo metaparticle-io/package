@@ -116,12 +116,13 @@ fn build_from_runtime(builder_name: String) -> Box<Builder> {
 
 }
 
-fn write_dockerfile(name: &str) {
+fn write_dockerfile(name: &str, dest: &Path) {
     let dockerfile = &format!("FROM ubuntu:16.04
     COPY ./{name} /tmp/{name}
     CMD /tmp/{name}
     ", name=name);
-    let path = Path::new("Dockerfile");
+    let file = Path::new("Dockerfile");
+    let path = dest.join(&file);
     let display = path.display();
 
     let mut file = match File::create(&path) {
@@ -149,12 +150,12 @@ pub fn containerize<F>(f: F, runtime: Runtime, package: Package) where F: Fn() {
         }
         let image = &format!("{repo}/{name}:latest", repo=package.repository, name=package.name);
         
-        write_dockerfile(&package.name);
-        let builder = build_from_runtime(package.builder.clone());
-
         let arg_0 = env::args().nth(0).unwrap();
         let path = Path::new(&arg_0);
         let docker_context = Path::new(path.parent().unwrap());
+
+        write_dockerfile(&package.name, docker_context);
+        let builder = build_from_runtime(package.builder.clone());
 
         builder.build(docker_context.to_str().unwrap(), image);
 
