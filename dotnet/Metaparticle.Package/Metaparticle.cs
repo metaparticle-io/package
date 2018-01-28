@@ -15,13 +15,16 @@ namespace Metaparticle.Package
         private Config config;
         private RuntimeConfig runtimeConfig;
 
-        public Driver(Config config, RuntimeConfig runtimeConfig) {
+        public Driver(Config config, RuntimeConfig runtimeConfig)
+        {
             this.config = config;
             this.runtimeConfig = runtimeConfig;
         }
 
-        private ImageBuilder getBuilder() {
-            switch (config.Builder.ToLowerInvariant()) {
+        private ImageBuilder getBuilder()
+        {
+            switch (config.Builder.ToLowerInvariant())
+            {
                 case "docker":
                     return new DockerBuilder();
                 case "aci":
@@ -31,11 +34,13 @@ namespace Metaparticle.Package
             }
         }
 
-        private ContainerExecutor getExecutor() {
+        private ContainerExecutor getExecutor()
+        {
             if (runtimeConfig == null) {
                 return null;
             }
-            switch (runtimeConfig.Executor.ToLowerInvariant()) {
+            switch (runtimeConfig.Executor.ToLowerInvariant())
+            {
                 case "docker":
                     return new DockerExecutor();
                 case "aci":
@@ -47,12 +52,15 @@ namespace Metaparticle.Package
             }
         }
 
-        private static string getArgs(string[] args) {
-            if (args == null || args.Length == 0) {
+        private static string getArgs(string[] args)
+        {
+            if (args == null || args.Length == 0)
+            {
                 return "";
             }
             var b = new StringBuilder();
-            foreach (var arg in args) {
+            foreach (var arg in args)
+            {
                 b.Append(arg);
                 b.Append(" ");
             }
@@ -97,30 +105,36 @@ namespace Metaparticle.Package
             if (!string.IsNullOrEmpty(config.Version)) {
                 imgName += ":" + config.Version;
             }
-            if (!builder.Build(dockerfilename, imgName, stdout: o, stderr: e)) {
+            if (!builder.Build(dockerfilename, imgName, stdout: o, stderr: e))
+            {
                 Console.Error.WriteLine("Image build failed.");
                 return;
             }
 
-            if (config.Publish) {
-                if (!builder.Push(imgName, stdout: o, stderr: e)) {
+            if (config.Publish)
+            {
+                if (!builder.Push(imgName, stdout: o, stderr: e))
+                {
                     Console.Error.WriteLine("Image push failed.");
                     return;
                 }
             }
 
-            if (runtimeConfig == null) {
+            if (runtimeConfig == null)
+            {
                 return;
             }
 
             var exec = getExecutor();
-            if (exec.PublishRequired() && !config.Publish) {
+            if (exec.PublishRequired() && !config.Publish)
+            {
                 Console.Error.WriteLine("Image publish is required, but image was not published. Set publish to true in the package config.");
                 return;
             }
             var id = exec.Run(imgName, runtimeConfig);
 
-            Console.CancelKeyPress += delegate {
+            Console.CancelKeyPress += delegate
+            {
                 exec.Cancel(id);
             };
 
@@ -159,7 +173,8 @@ namespace Metaparticle.Package
 
         public static bool InDockerContainer()
         {
-            switch (System.Environment.GetEnvironmentVariable("METAPARTICLE_IN_CONTAINER")) {
+            switch (System.Environment.GetEnvironmentVariable("METAPARTICLE_IN_CONTAINER"))
+            {
                 case "true":
                 case "1":
                     return true;
@@ -193,7 +208,8 @@ namespace Metaparticle.Package
                 {
                     config = (Config) attribute;
                 }
-                if (attribute is RuntimeConfig) {
+                if (attribute is RuntimeConfig)
+                {
                     runtimeConfig = (RuntimeConfig) attribute;
                 }
             }
