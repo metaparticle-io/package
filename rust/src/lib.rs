@@ -62,9 +62,12 @@ impl Default for Package {
 }
 
 pub fn run_docker_process(args: Vec<&str>) {
-    let name = args[0].clone();
-    let mut child = process::Command::new("docker")
-        .args(&args)
+    let name = args[1].clone();
+    let cmd = args.join(" ");
+
+    let mut child = process::Command::new("sh")
+        .arg("-c")
+        .arg(cmd)
         .spawn()
         .expect(&format!("failed to execute 'docker {name}'", name=name));
 

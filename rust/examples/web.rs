@@ -53,7 +53,7 @@ fn main() {
         ..Default::default()
     };
     let package = metaparticle::Package{
-        name: "hello".to_string(),
+        name: "web".to_string(),
         repository: "brendanburns".to_string(),
         ..Default::default()
     };
