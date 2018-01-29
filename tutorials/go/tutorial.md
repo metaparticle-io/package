@@ -48,7 +48,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-     log.Println("Starting server on :8080")
+     log.Printf("Starting server on :%d\n", port)
      http.HandleFunc("/", handler)
      if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
      	log.Fatal("Couldn't start the server: ", err)
@@ -62,7 +62,7 @@ build file, and then update the code.
 
 Run:
 ```sh
-$ go get https://github.com/metaparticle-io/package/go/metaparticle
+$ go get github.com/metaparticle-io/package/go/metaparticle
 ```
 
 Then update the code to read as follows:
@@ -96,7 +96,7 @@ func main() {
 			Publish:    true,
 		},
 		func() {
-			log.Println("Starting server on :8080")
+			log.Printf("Starting server on :%d\n", port)
 			http.HandleFunc("/", handler)
 			err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 			if err != nil {
@@ -177,7 +177,7 @@ func main() {
 			Publish:    true,
 		},
 		func() {
-			log.Println("Starting server on :8080")
+			log.Printf("Starting server on :%d\n", port)
 			http.HandleFunc("/", handler)
 			err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 			if err != nil {
@@ -246,7 +246,7 @@ func main() {
 			Publish:    true,
 		},
 		func() {
-			log.Println("Starting server on :8080")
+			log.Printf("Starting server on :%d\n", port)
 			http.HandleFunc("/", handler)
 			err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 			if err != nil {

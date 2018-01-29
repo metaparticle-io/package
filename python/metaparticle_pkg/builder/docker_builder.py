@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class DockerBuilder:
     def __init__(self):
-        self.docker_client = APIClient(version='auto') 
+        self.docker_client = APIClient(version='auto')
 
     def build(self, img, path='.'):
 

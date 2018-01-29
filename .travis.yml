@@ -1,17 +1,28 @@
 sudo: enabled
 matrix:
   include:
-    #TODO: fix running tests in python 
-    # - language: python
-    #   python: 3.6
-    #   install:
-    #     - pip install -r python/requirements.txt
-    #   script:
-    #     - PYTHONPATH=./python python -m unittest discover -s ./python/metaparticle_pkg/
-    - language: node_js
-      node_js: 8
-      before_script:
-        - cd javascript/metaparticle-package
-        - npm install
-      script:
-        - npm test
+
+  - language: python
+    python: 3.6
+    install:
+    - pip install -r python/requirements.txt
+    script:
+    - python3 -m pytest --cov=. --cov-report=term-missing:skip-covered
+
+  - language: node_js
+    node_js: 8
+    before_script:
+    - cd javascript/metaparticle-package
+    - npm install
+    script:
+    - npm test
+
+  - language: csharp
+    sudo: required
+    dotnet: 2.0.0
+    mono: none
+    before_script:
+    - cd dotnet
+    - ls
+    script:
+    - ./build.sh
