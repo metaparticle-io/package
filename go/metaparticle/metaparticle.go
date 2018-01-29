@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 	"os/signal"
-	"reflect"
 	"strings"
 )
 
@@ -82,11 +81,7 @@ func executorFromRuntime(r *Runtime) (Executor, error) {
 	case "docker":
 		return NewDockerImpl()
 	case "aci":
-		aciConfig, ok := r.ExtraConfig.(*AciRuntimeConfig)
-		if !ok {
-			return nil, fmt.Errorf("Extra config not of AciRuntimeConfig type: %v", reflect.TypeOf(r.ExtraConfig))
-		}
-		return &ACIExecutor{aciConfig}, nil
+		return NewACIExecutor()
 	case "metaparticle":
 		return &MetaparticleExecutor{}, nil
 	default:
