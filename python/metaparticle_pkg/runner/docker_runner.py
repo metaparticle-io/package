@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class DockerRunner:
     def __init__(self):
-        self.docker_client = APIClient(version='auto') 
+        self.docker_client = APIClient(version='auto')
 
     def run(self, img, name, options):
         ports = []

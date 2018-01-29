@@ -3,42 +3,42 @@
 
 
 import unittest
-from mock import patch
-from metaparticle_pkg.builder import docker
+from unittest.mock import patch
+from metaparticle_pkg.builder import docker_builder
 
 
 class TestDockerBuilder(unittest.TestCase):
     '''Unit tests for DockerBuilder'''
 
     def setUp(self):
-        self.docker_builder = docker.DockerBuilder()
+        self.builder = docker_builder.DockerBuilder()
 
         # Input arguments
-        self.img = "test_image"
+        self.img = 'test_image'
 
-    @patch("metaparticle_pkg.builder.docker.subprocess")
-    def test_build(self, mocked_subprocess):
+    @patch('metaparticle_pkg.builder.docker_builder.APIClient.build')
+    def test_build(self, mocked_build):
         '''Test build method'''
 
-        # Expected argument called with
-        expected_args = ['docker', 'build', '-t', self.img, '.']
+        self.builder.build(self.img)
 
-        self.docker_builder.build(self.img)
+        mocked_build.assert_called_once_with(
+            path='.',
+            tag=self.img,
+            encoding='utf-8'
+        )
 
-        mocked_subprocess.check_call.assert_called_once_with(
-            expected_args)
-
-    @patch("metaparticle_pkg.builder.docker.subprocess")
-    def test_publish(self, mocked_subprocess):
+    @patch('metaparticle_pkg.builder.docker_builder.APIClient.push')
+    def test_publish(self, mocked_push):
         '''Test publish method'''
 
         # Expected argument called with
-        expected_args = ['docker', 'push', self.img]
+        self.builder.publish(self.img)
 
-        self.docker_builder.publish(self.img)
-
-        mocked_subprocess.check_call.assert_called_once_with(
-            expected_args)
+        mocked_push.ssert_called_once_with(
+            self.img,
+            stream=True
+        )
 
 
 if __name__ == '__main__':
