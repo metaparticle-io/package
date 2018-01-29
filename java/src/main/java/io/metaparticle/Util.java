@@ -1,7 +1,7 @@
 package io.metaparticle;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.google.common.io.ByteStreams;
