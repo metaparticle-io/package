@@ -102,17 +102,20 @@ func builderFromPackage(pkg *Package) (Builder, error) {
 }
 
 func writeDockerfile(name string) error {
-	contents := `FROM golang:1.9
+	contents := `FROM golang:1.9 as builder
 WORKDIR /go/src/app
 COPY . .
 
 RUN go get -u github.com/golang/dep/cmd/dep
-
 RUN dep init
-
 RUN go-wrapper install
 
-CMD ["go-wrapper", "run"]
+
+FROM ubuntu
+
+COPY --from=builder /go/bin/app .
+
+CMD ["./app"]
 `
 	return ioutil.WriteFile("Dockerfile", []byte(contents), 0644)
 }
