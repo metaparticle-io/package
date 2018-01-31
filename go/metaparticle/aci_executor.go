@@ -121,10 +121,12 @@ func (a *ACIExecutor) Run(image string, name string, cfg *Runtime, stdout io.Wri
 	}
 
 	// TODO - add context support
-	_, err := a.groupsClient.CreateOrUpdate(context.Background(), a.config.ResourceGroupName, name, parameters)
+	c, err := a.groupsClient.CreateOrUpdate(context.Background(), a.config.ResourceGroupName, name, parameters)
 	if err != nil {
 		return fmt.Errorf("cannot create container group: %v", err)
 	}
+
+	fmt.Printf("started container group - to access, wait for it to be running, then go to: %v\n", *c.IPAddress.IP)
 
 	return nil
 }
