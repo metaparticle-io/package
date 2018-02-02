@@ -39,5 +39,28 @@ But now, when you run the application, instead of printing "Hello world", it fir
 then (optionally) deploys itself inside that container.
 
 ## Tutorial
-For a more complete exploration of the Metaparticle/Package for Dotnet Core, please see the [in-depth tutorial](../tutorials/javascript/tutorial.md).
+For a more complete exploration of the Metaparticle/Package for javascript, please see the [in-depth tutorial](../tutorials/javascript/tutorial.md).
 
+### Use ACI
+
+```javascript
+const mp = require('@metaparticle/package');
+
+mp.containerize(
+    {
+		repository: 'myrepo',
+		publish: 'true',
+		runner: 'aci',
+		resourceGroup: 'myResourceGroup',
+		subscriptionId: '00000000-0000-0000-0000-000000000000',
+		public: 'true',
+		ports: [80],
+		clientId: '00000000-0000-0000-0000-000000000000',
+		clientSecret: 'mykey',
+		tenantId: '00000000-0000-0000-0000-000000000000'
+    },
+    () => {
+        console.log('hello world');
+    }
+);
+```
