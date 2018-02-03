@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 '''Unit tests for containerize module'''
 
-import os as original_os
 import unittest
-from unittest.mock import patch, call, mock_open, MagicMock
+from unittest.mock import patch, mock_open, MagicMock
 from metaparticle_pkg import containerize
 from types import FunctionType
 
