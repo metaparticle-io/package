@@ -85,9 +85,15 @@
             var runner = selectRunner((options && options.runner) ? options.runner : 'docker');
 
             process.on('SIGINT', function() {
+                console.log('Exiting...');
                 runner.cancel(name);
-                process.exit();
+
+                // Wait 5 seconds for cleanup.
+                setTimeout(() => {
+                    process.exit();
+                }, 5000);
             });
+
             if (options && options.repository) {
                 img = options.repository + '/' + img;
             }
