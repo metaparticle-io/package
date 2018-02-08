@@ -8,6 +8,7 @@ matrix:
     - pip install -r python/requirements.txt
     script:
     - python3 -m pytest --cov=. --cov-report=term-missing:skip-covered
+    - python3 -m flake8 --config python/setup.cfg
 
   - language: node_js
     node_js: 8
