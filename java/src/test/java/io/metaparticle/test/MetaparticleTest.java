@@ -19,7 +19,7 @@ import io.metaparticle.MetaparticleExecutor;
 import io.metaparticle.annotations.Package;
 import io.metaparticle.annotations.Runtime;
 
-public class MetaParticleTest {
+public class MetaparticleTest {
 
 	@Test
 	public void inDockerContainerTest() {
