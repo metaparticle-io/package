@@ -26,7 +26,7 @@ func main() {
 		},
 		&metaparticle.Package{
 			Name:       "metaparticle-aci-demo",
-			Repository: "radumatei",
+			Repository: "docker.io/radumatei",
 			Builder:    "docker",
 			Verbose:    true,
 			Publish:    true,

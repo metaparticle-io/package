@@ -27,7 +27,7 @@ func main() {
 		},
 		&metaparticle.Package{
 			Name:       "metaparticle-shard-demo",
-			Repository: "brendanburns",
+			Repository: "docker.io/brendanburns",
 			Builder:    "docker",
 			Verbose:    true,
 			Publish:    true,
