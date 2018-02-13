@@ -158,7 +158,7 @@ func Containerize(r *Runtime, p *Package, f func()) {
 		if p.Publish {
 			err = builder.Push(image, os.Stdout, os.Stderr)
 			if err != nil {
-				panic(fmt.Sprintf("Could not push the image to the repository: %v", err))
+				panic(fmt.Sprintf("Could not push image \"%v\" to the repository: %v", image, err))
 			}
 		}
 
