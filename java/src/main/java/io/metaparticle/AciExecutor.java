@@ -1,10 +1,10 @@
 package io.metaparticle;
 
-import java.io.OutputStream;
-import java.util.ArrayList;
-
 import static io.metaparticle.Util.addAll;
 import static io.metaparticle.Util.handleErrorExec;
+
+import java.io.OutputStream;
+import java.util.ArrayList;
 
 public class AciExecutor implements Executor {
     @Override

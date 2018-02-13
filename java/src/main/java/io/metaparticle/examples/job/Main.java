@@ -1,8 +1,9 @@
 package io.metaparticle.examples.job;
 
+import static io.metaparticle.Metaparticle.Containerize;
+
 import io.metaparticle.annotations.Package;
 import io.metaparticle.annotations.Runtime;
-import static io.metaparticle.Metaparticle.Containerize;
 
 public class Main {
     @Runtime(iterations=4,

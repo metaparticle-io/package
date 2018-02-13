@@ -1,10 +1,12 @@
 package io.metaparticle;
 
+import static io.metaparticle.Util.addAll;
+import static io.metaparticle.Util.handleErrorExec;
+
 import java.io.OutputStream;
 import java.util.ArrayList;
+
 import io.metaparticle.annotations.Runtime;
-import static io.metaparticle.Util.handleErrorExec;
-import static io.metaparticle.Util.addAll;
 
 public class DockerImpl implements Executor, Builder {
     @Override
