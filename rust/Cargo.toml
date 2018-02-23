@@ -6,4 +6,8 @@ version = "0.0.1"
 name = "hello"
 path = "examples/hello.rs"
 
+[[example]]
+name = "web"
+path = "examples/web.rs"
+
 [dependencies]

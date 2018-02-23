@@ -5,7 +5,8 @@ using System.Threading;
 using Metaparticle.Runtime;
 using static Metaparticle.Package.Util;
 
-namespace Metaparticle.Package {
+namespace Metaparticle.Package 
+{
     public class MetaparticleExecutor : ContainerExecutor
     {
         public void Cancel(string id)
@@ -15,7 +16,8 @@ namespace Metaparticle.Package {
             HandleErrorExec("mp-compiler", string.Format("-f {0} --delete", specFileName));
         }
 
-        private void HandleErrorExec(string cmd, string args, TextWriter stdout=null) {
+        private void HandleErrorExec(string cmd, string args, TextWriter stdout=null)
+        {
             var err = new StringWriter();
             var proc = Exec(cmd, args, stdout: stdout, stderr: err);
             if (proc.ExitCode != 0) {

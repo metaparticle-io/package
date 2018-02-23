@@ -22,17 +22,18 @@ func main() {
 		&metaparticle.Runtime{
 			Ports:    []int32{port},
 			Executor: "metaparticle",
-			Replicas: 3,
+			Shards: 3,
+			URLShardPattern: "^\\/users\\/([^\\/]*)\\/.*",
 		},
 		&metaparticle.Package{
-			Name:       "metaparticle-web-demo",
+			Name:       "metaparticle-shard-demo",
 			Repository: "brendanburns",
 			Builder:    "docker",
 			Verbose:    true,
 			Publish:    true,
 		},
 		func() {
-			log.Printf("Starting server on :%d\n", port)
+			log.Printf("Starting server on :%d\n" port)
 			http.HandleFunc("/", handler)
 			err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 			if err != nil {

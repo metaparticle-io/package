@@ -3,8 +3,10 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
 
-namespace Metaparticle.Package {
-    public class Util {
+namespace Metaparticle.Package
+{
+    public class Util
+    {
         public static Process Exec(String file, String args, TextWriter stdout=null, TextWriter stderr=null)
         {
             var task = ExecAsync(file, args, stdout, stderr);
@@ -12,7 +14,8 @@ namespace Metaparticle.Package {
             return task.Result;
         }
 
-        public static async Task Copy(StreamReader reader, TextWriter writer) {
+        public static async Task Copy(StreamReader reader, TextWriter writer)
+        {
             if (reader == null || writer == null) {
                 return;
             }
@@ -34,8 +37,10 @@ namespace Metaparticle.Package {
             var outputTask = Copy(proc.StandardOutput, stdout);
             var errTask = Copy(proc.StandardError, stderr);
 
-            await Task.Run(() => {
-                Task.WaitAll(new []{
+            await Task.Run(() => 
+            {
+                Task.WaitAll(new []
+                {
                     runTask,
                     outputTask,
                     errTask,

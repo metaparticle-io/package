@@ -131,7 +131,7 @@ The code snippet to add is:
 
 ```cs
 ...
-    [Metaparticle.Runtime.Config(Ports = int[] {8080})]
+    [Metaparticle.Runtime.Config(Ports = new int[] {8080})]
 ...
 ```
 
@@ -171,6 +171,8 @@ namespace web
 ```
 
 Now if you run this with `dotnet run` your webserver will be successfully exposed on port 8080.
+
+You can verify that it works by running `curl localhost:8080`
 
 ## Replicating and exposing on the web.
 As a final step, consider the task of exposing a replicated service on the internet.

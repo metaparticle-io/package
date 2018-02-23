@@ -6,11 +6,11 @@ fn run() {
 
 fn main() {
     let runtime = metaparticle::Runtime{
-        ports: Some(80),
         ..Default::default()
     };
     let package = metaparticle::Package{
         name: "hello".to_string(),
+        repository: "brendanburns".to_string(),
         ..Default::default()
     };
     metaparticle::containerize(run, runtime, package)

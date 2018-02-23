@@ -29,7 +29,7 @@ impl Default for Runtime {
         Runtime {
             replicas: None,
             shards: None,
-            url_shard_pattern: Some("something".to_string()),
+            url_shard_pattern: Some("".to_string()),
             executor: "docker".to_string(),
             ports: None,
             public_address: Some(false)
@@ -51,8 +51,8 @@ pub struct Package {
 impl Default for Package {
     fn default() -> Package {
         Package {
-            name: "name".to_string(),
-            repository: "repository".to_string(),
+            name: "".to_string(),
+            repository: "".to_string(),
             verbose: Some(false), 
             quiet:  Some(false),
             builder: "docker".to_string(),
@@ -62,9 +62,12 @@ impl Default for Package {
 }
 
 pub fn run_docker_process(args: Vec<&str>) {
-    let name = args[0].clone();
-    let mut child = process::Command::new("docker")
-        .args(&args)
+    let name = args[1].clone();
+    let cmd = args.join(" ");
+
+    let mut child = process::Command::new("sh")
+        .arg("-c")
+        .arg(cmd)
         .spawn()
         .expect(&format!("failed to execute 'docker {name}'", name=name));
 
@@ -113,12 +116,13 @@ fn build_from_runtime(builder_name: String) -> Box<Builder> {
 
 }
 
-fn write_dockerfile(name: &str) {
+fn write_dockerfile(name: &str, dest: &Path) {
     let dockerfile = &format!("FROM ubuntu:16.04
     COPY ./{name} /tmp/{name}
     CMD /tmp/{name}
     ", name=name);
-    let path = Path::new("Dockerfile");
+    let file = Path::new("Dockerfile");
+    let path = dest.join(&file);
     let display = path.display();
 
     let mut file = match File::create(&path) {
@@ -137,11 +141,23 @@ pub fn containerize<F>(f: F, runtime: Runtime, package: Package) where F: Fn() {
     if in_docker_container() {
         f();
     } else {
+
+        if package.repository.len() == 0 {
+            panic!("A package must be given a 'repository' value");
+        }
+        if package.name.len() == 0 {
+            panic!("A package must be given a 'name' value");
+        }
         let image = &format!("{repo}/{name}:latest", repo=package.repository, name=package.name);
         
-        write_dockerfile(&package.name);
+        let arg_0 = env::args().nth(0).unwrap();
+        let path = Path::new(&arg_0);
+        let docker_context = Path::new(path.parent().unwrap());
+
+        write_dockerfile(&package.name, docker_context);
         let builder = build_from_runtime(package.builder.clone());
-        builder.build(".", image);
+
+        builder.build(docker_context.to_str().unwrap(), image);
 
         let executor = executor_from_runtime(runtime.executor.clone());
         executor.run(image, &package.name, runtime);
