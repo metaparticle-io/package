@@ -1,4 +1,4 @@
-# Metaparticle for Python
+# Metaparticle for Rust
 Metaparticle/Package is a collection of libraries intended to
 make building and deploying containers a seamless and idiomatic
 experience for developers.
@@ -11,7 +11,7 @@ building and deploying a container image.
 
 Here is a quick example.
 
-Consider this simple Python application:
+Consider this simple Rust application:
 ```rust
 fn main() {
     println!("Hello World!");
