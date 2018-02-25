@@ -12,7 +12,7 @@ func main() {
 			Executor: "docker",
 		},
 		&metaparticle.Package{
-			Repository: "brendanburns",
+			Repository: "docker.io/brendanburns",
 			Name:       "go-simple",
 			Builder:    "docker",
 		},

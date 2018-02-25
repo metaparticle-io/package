@@ -1,5 +1,8 @@
 package io.metaparticle;
 
+import static io.metaparticle.Util.handleErrorExec;
+import static io.metaparticle.Util.once;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -9,8 +12,6 @@ import java.nio.file.Paths;
 
 import io.metaparticle.annotations.Package;
 import io.metaparticle.annotations.Runtime;
-import static io.metaparticle.Util.handleErrorExec;
-import static io.metaparticle.Util.once;
 
 public class Metaparticle {
 
@@ -67,7 +68,7 @@ public class Metaparticle {
         }
     }
 
-    public static void writeDockerfile(String className, Package p, String projectName) throws IOException {
+    public static void writeDockerfile(String className, Package p) throws IOException {
         byte [] output;
         if (p.dockerfile() == null || p.dockerfile().length() == 0) {
             String contents = 
@@ -100,29 +101,29 @@ public class Metaparticle {
             
 
             try {
-                Class clazz = Class.forName(className);
+                Class<?> clazz = Class.forName(className);
                 String name = clazz.getCanonicalName().replace('.', '-').toLowerCase();
                 String image = name;
-                Method m = clazz.getMethod(methodName, String[].class);
-                Package p = m.getAnnotation(Package.class);
-                Runtime r = m.getAnnotation(Runtime.class);
+                Method method = clazz.getMethod(methodName, String[].class);
+                Package packageAnnotation = method.getAnnotation(Package.class);
+                Runtime runtimeAnnotation = method.getAnnotation(Runtime.class);
 
-                if (p.repository().length() != 0) {
-                    image = p.repository() + "/" + image;
+                if (packageAnnotation.repository().length() != 0) {
+                    image = packageAnnotation.repository() + "/" + image;
                 }
 
-                Executor exec = getExecutor(r);
-                Builder builder = getBuilder(p);
+                Executor exec = getExecutor(runtimeAnnotation);
+                Builder builder = getBuilder(packageAnnotation);
 
-                OutputStream stdout = p.verbose() ? System.out : null;
-                OutputStream stderr = p.quiet() ? null : System.err;
+                OutputStream stdout = packageAnnotation.verbose() ? System.out : null;
+                OutputStream stderr = packageAnnotation.quiet() ? null : System.err;
 
-                writeDockerfile(className, p, "metaparticle-package");
+                writeDockerfile(className, packageAnnotation);
 
-                if (p.build()) {
+                if (packageAnnotation.build()) {
                     handleErrorExec(new String[] {"mvn", "package"}, System.out, System.err);                    
                     builder.build(".", image, stdout, stderr);
-                    if (p.publish()) {
+                    if (packageAnnotation.publish()) {
                         builder.push(image, stdout, stderr);
                     }
                 }
@@ -130,7 +131,7 @@ public class Metaparticle {
                 Runnable cancel = once(() -> exec.cancel(name));
                 java.lang.Runtime.getRuntime().addShutdownHook(new Thread(cancel));
 
-                exec.run(image, name, r, stdout, stderr);
+                exec.run(image, name, runtimeAnnotation, stdout, stderr);
                 exec.logs(name, System.out, System.err);
                 cancel.run();
             } catch (NoSuchMethodException | ClassNotFoundException | IOException ex) {

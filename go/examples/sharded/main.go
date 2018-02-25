@@ -27,13 +27,13 @@ func main() {
 		},
 		&metaparticle.Package{
 			Name:       "metaparticle-shard-demo",
-			Repository: "brendanburns",
+			Repository: "docker.io/brendanburns",
 			Builder:    "docker",
 			Verbose:    true,
 			Publish:    true,
 		},
 		func() {
-			log.Println("Starting server on :8080")
+			log.Printf("Starting server on :%d\n" port)
 			http.HandleFunc("/", handler)
 			err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 			if err != nil {

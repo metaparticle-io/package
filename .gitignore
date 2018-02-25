@@ -43,3 +43,4 @@ go/**/Dockerfile
 
 python/**/MANIFEST
 python/**/dist
+.cache/

@@ -2,15 +2,14 @@ package metaparticle
 
 import (
 	"archive/tar"
-	"bufio"
 	"compress/gzip"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -21,7 +20,9 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
+	"github.com/docker/docker/pkg/jsonmessage"
 	"github.com/docker/docker/pkg/stdcopy"
+	"github.com/docker/docker/pkg/term"
 	"github.com/docker/go-connections/nat"
 )
 
@@ -29,6 +30,7 @@ import (
 type DockerImpl struct {
 	imageClient     dockerImageClient
 	containerRunner dockerContainerRunner
+	authStr         string
 }
 
 // Docker's client.ImageAPIClient is too big, so I created this interface with the only methods needed from it.
@@ -48,7 +50,23 @@ type dockerContainerRunner interface {
 	ContainerLogs(ctx context.Context, container string, options types.ContainerLogsOptions) (io.ReadCloser, error)
 }
 
+func getAuthStringFromEnv() (string, error) {
+	authConfig := types.AuthConfig{
+		Username: os.Getenv("MP_REGISTRY_USERNAME"),
+		Password: os.Getenv("MP_REGISTRY_PASSWORD"),
+	}
+	encodedJSON, err := json.Marshal(authConfig)
+	if err != nil {
+		return "", err
+	}
+	return base64.URLEncoding.EncodeToString(encodedJSON), nil
+}
+
 func newDockerImpl(imageClient dockerImageClient, containerRunner dockerContainerRunner) (*DockerImpl, error) {
+	authStr, err := getAuthStringFromEnv()
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to create auth string from environment variables (did you forget to set MP_REGISTRY_USER or MP_REGISTRY_PASSWORD?)")
+	}
 	if imageClient == nil && containerRunner == nil {
 		dockerClient, err := client.NewEnvClient()
 		if err != nil {
@@ -57,10 +75,9 @@ func newDockerImpl(imageClient dockerImageClient, containerRunner dockerContaine
 
 		// dockerClient implements both APIs, but having separate struct members with specific interfaces
 		// will make mocking for testing easier
-		return &DockerImpl{dockerClient, dockerClient}, nil
+		return &DockerImpl{dockerClient, dockerClient, authStr}, nil
 	}
-
-	return &DockerImpl{imageClient, containerRunner}, nil
+	return &DockerImpl{imageClient, containerRunner, authStr}, nil
 }
 
 // NewDockerImpl returns a singleton struct that uses docker to implement metaparticle.Builder and metaparticle.Executor.
@@ -126,34 +143,6 @@ func createTarGz(dir string) (string, error) {
 	return tarball.Name(), nil
 }
 
-// printStreamResponse decodes a json stream response from the docker server
-func printStreamResponse(body io.ReadCloser, out io.Writer) error {
-	var line struct {
-		Stream string `json:"stream"`
-	}
-	/*decoder := json.NewDecoder(body)
-	for decoder.More() {
-		err := decoder.Decode(&line)
-		if err != nil {
-			return err
-		}
-		out.Write([]byte("foo!"))
-		out.Write([]byte(line.Stream))
-	}
-	return nil
-	*/
-	defer body.Close()
-
-	scanner := bufio.NewScanner(body)
-	for scanner.Scan() {
-		if err := json.Unmarshal(scanner.Bytes(), &line); err != nil {
-			return err
-		}
-		out.Write([]byte(line.Stream))
-	}
-	return nil
-}
-
 // Build creates a tarball with the directory's contents and sends it to docker to be build the image
 func (d *DockerImpl) Build(dir string, image string, stdout io.Writer, stderr io.Writer) error {
 	if len(dir) == 0 {
@@ -186,12 +175,10 @@ func (d *DockerImpl) Build(dir string, image string, stdout io.Writer, stderr io
 		fmt.Printf("%s: %#v\n", image, err)
 		return errors.Wrap(err, "Error sending build request to docker")
 	}
+	defer res.Body.Close()
 
-	if err = printStreamResponse(res.Body, stdout); err != nil {
-		return errors.Wrap(err, "Error reading build output from docker")
-	}
-
-	return nil
+	outFd, isTerminal := term.GetFdInfo(stdout)
+	return jsonmessage.DisplayJSONMessagesStream(res.Body, stdout, outFd, isTerminal, nil)
 }
 
 // Push pushes the image to the docker registry
@@ -199,11 +186,20 @@ func (d *DockerImpl) Push(image string, stdout io.Writer, stderr io.Writer) erro
 	if len(image) == 0 {
 		return errEmptyImageName
 	}
-	// TODO: Figure out auth and use the docker client library here
-	cmd := exec.Command("docker", "push", image)
-	cmd.Stdout = stdout
-	cmd.Stderr = stderr
-	return cmd.Run()
+	ctx := context.Background()
+	options := types.ImagePushOptions{}
+	if len(d.authStr) > 0 {
+		options.RegistryAuth = d.authStr
+	}
+	res, err := d.imageClient.ImagePush(ctx, image, options)
+	if res != nil {
+		defer res.Close()
+	}
+	if err != nil {
+		return errors.Wrap(err, "Error sending push request to docker")
+	}
+	outFd, isTerminal := term.GetFdInfo(stdout)
+	return jsonmessage.DisplayJSONMessagesStream(res, stdout, outFd, isTerminal, nil)
 }
 
 func parsePorts(ports []int32) (nat.PortMap, nat.PortSet, error) {

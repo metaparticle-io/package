@@ -1,7 +1,8 @@
 package io.metaparticle;
 
-import io.metaparticle.annotations.Runtime;
 import java.io.OutputStream;
+
+import io.metaparticle.annotations.Runtime;
 
 public interface Executor {
     public boolean run(String image, String name, Runtime config, OutputStream stdout, OutputStream stderr);

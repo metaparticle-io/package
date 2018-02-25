@@ -29,3 +29,12 @@
 [[override]]
   name = "github.com/docker/distribution"
   revision = "f4118485915abb8b163442717326597908eee6aa"
+
+
+[[override]]
+  name = "github.com/Azure/azure-sdk-for-go"
+  version = "12.2.0-beta"
+
+[[constraint]]
+  name = "github.com/Azure/go-autorest"
+  version = "9.6.0"

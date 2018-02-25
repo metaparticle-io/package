@@ -3,7 +3,7 @@
 
 from sys import exit as real_exit
 import unittest
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 from metaparticle_pkg import option
 
 

@@ -1,1 +1,4 @@
 docker==2.7.0
+flake8
+pytest
+pytest-cov
