@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Metaparticle.Package.Testing
+namespace Metaparticle.Tests
 {
     public interface TestRunner 
     {

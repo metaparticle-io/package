@@ -4,9 +4,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using dockerfile;
+using Metaparticle.Tests;
 using static Metaparticle.Package.Util;
 using RuntimeConfig = Metaparticle.Runtime.Config;
-using Metaparticle.Package.Testing;
+using TestConfig = Metaparticle.Tests.Config;
 
 namespace Metaparticle.Package
 {
@@ -14,11 +15,13 @@ namespace Metaparticle.Package
     {
         private Config config;
         private RuntimeConfig runtimeConfig;
+        private TestConfig testConfig;
 
-        public Driver(Config config, RuntimeConfig runtimeConfig)
+        public Driver(Config config, RuntimeConfig runtimeConfig, TestConfig testConfig)
         {
             this.config = config;
             this.runtimeConfig = runtimeConfig;
+            this.testConfig = testConfig;
         }
 
         private ImageBuilder getBuilder()
@@ -143,8 +146,7 @@ namespace Metaparticle.Package
 
         private void RunTests()
         {
-            var testsAsCsv = System.Environment.GetEnvironmentVariable("METAPARTICLE_TESTS_CSV");
-            var runTestsResult = new DotnetTestRunner().Run(testsAsCsv.Split(','));
+            var runTestsResult = new DotnetTestRunner().Run(testConfig.Names);
             if (runTestsResult == false)
             {
                 throw new Exception("Tests Failed.");   
@@ -201,6 +203,8 @@ namespace Metaparticle.Package
             }
             Config config = new Config();
             RuntimeConfig runtimeConfig = null;
+            TestConfig testConfig = null;
+
             var trace = new StackTrace();
             foreach (object attribute in trace.GetFrame(1).GetMethod().GetCustomAttributes(true))
             {
@@ -212,8 +216,12 @@ namespace Metaparticle.Package
                 {
                     runtimeConfig = (RuntimeConfig) attribute;
                 }
+                if (attribute is TestConfig)
+                {
+                    testConfig = (TestConfig) attribute;
+                }
             }
-            var mp = new Driver(config, runtimeConfig);
+            var mp = new Driver(config, runtimeConfig, testConfig);
             mp.Build(args);
         }
     }

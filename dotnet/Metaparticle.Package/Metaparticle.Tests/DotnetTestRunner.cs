@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using static Metaparticle.Package.Util;
 
-namespace Metaparticle.Package.Testing
+namespace Metaparticle.Tests
 {
     public class DotnetTestRunner : TestRunner 
     {

@@ -9,7 +9,8 @@ namespace simple
     {
         [Metaparticle.Runtime.Config]
         [Metaparticle.Package.Config(Verbose = true,
-			Publish = false, Repository = "docker.io/docker-user-goes-here/dotnet-simple")] 
+			Publish = false, Repository = "docker.io/docker-user-goes-here/dotnet-simple")]
+        [Metaparticle.Tests.Config(Names = new[] {"../simple-test"})]
         public static void Main(string[] args) => Containerize (args, () =>
         {
             Console.Out.WriteLine(args);
