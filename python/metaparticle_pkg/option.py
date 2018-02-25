@@ -18,11 +18,11 @@ def load(cls, options):
         sys.exit(1)
 
 
-class RuntimeOptions(namedtuple('Runtime', 'executor replicas ports publicAddress shardSpec jobSpec')):
+class RuntimeOptions(namedtuple('Runtime', 'executor replicas ports public shardSpec jobSpec')):
     required_options = []
 
-    def __new__(cls, executor='docker', replicas=0, ports=[], publicAddress=[], shardSpec=None, jobSpec=None):
-        return super(RuntimeOptions, cls).__new__(cls, executor, replicas, ports, publicAddress, shardSpec, jobSpec)
+    def __new__(cls, executor='docker', replicas=0, ports=[], public=False, shardSpec=None, jobSpec=None):
+        return super(RuntimeOptions, cls).__new__(cls, executor, replicas, ports, public, shardSpec, jobSpec)
 
 
 class ShardSpec(namedtuple('ShardSpec', 'shards shardExpression')):
