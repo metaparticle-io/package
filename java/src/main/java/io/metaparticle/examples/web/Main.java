@@ -1,17 +1,17 @@
 package io.metaparticle.examples.web;
 
-import io.metaparticle.annotations.Package;
-import io.metaparticle.annotations.Runtime;
 import static io.metaparticle.Metaparticle.Containerize;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.util.function.Function;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+
+import io.metaparticle.annotations.Package;
+import io.metaparticle.annotations.Runtime;
 
 public class Main {
     private static final int port = 8080;

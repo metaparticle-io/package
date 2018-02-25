@@ -1,12 +1,13 @@
 import setuptools
+import json
 
-exec(open('./metaparticle_pkg/version.py').read())
+config = json.loads('./metaparticle_pkg/version.json')
 
 setuptools.setup(
     name='metaparticle_pkg',
-    version=__version__,
+    version=config['version'],
     url='https://github.com/metaparticle-io/package/tree/master/python',
-    license=__license__,
+    license=config['license'],
     description='Easily containerize your python application',
     author='Metaparticle Authors',
     packages=setuptools.find_packages(),
@@ -14,10 +15,11 @@ setuptools.setup(
     include_package_data=False,
     zip_safe=False,
     install_requires=['docker==2.7.0'],
+    test_require=['pytest', 'flake8'],
     platforms='linux',
     keywords=['kubernetes', 'docker', 'container', 'metaparticle'],
     # latest from https://pypi.python.org/pypi?%3Aaction=list_classifiers
-    classifiers = [
+    classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Intended Audience :: Developers',

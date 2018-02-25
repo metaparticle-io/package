@@ -9,24 +9,24 @@ import (
 	"github.com/metaparticle-io/package/go/metaparticle"
 )
 
-var port int32 = 8080
+var port int32 = 80
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	hostname, _ := os.Hostname()
-	fmt.Fprintf(w, "Hello metaparticle from %s %s!\n", r.RequestURI, hostname)
+	fmt.Fprintf(w, "Hello metaparticle in Azure Container Instances from %s %s!\n", r.RequestURI, hostname)
 	fmt.Printf("Request received: %s\n", r.RequestURI)
 }
 
 func main() {
 	metaparticle.Containerize(
 		&metaparticle.Runtime{
-			Ports:    []int32{port},
-			Executor: "metaparticle",
-			Replicas: 3,
+			Executor:      "aci",
+			Ports:         []int32{port},
+			PublicAddress: true,
 		},
 		&metaparticle.Package{
-			Name:       "metaparticle-web-demo",
-			Repository: "docker.io/brendanburns",
+			Name:       "metaparticle-aci-demo",
+			Repository: "docker.io/radumatei",
 			Builder:    "docker",
 			Verbose:    true,
 			Publish:    true,

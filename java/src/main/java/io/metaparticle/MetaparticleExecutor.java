@@ -1,17 +1,7 @@
 package io.metaparticle;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.microsoft.rest.serializer.JacksonAdapter;
-import io.metaparticle.annotations.Runtime;
-import io.metaparticle.models.Container;
-import io.metaparticle.models.EnvVar;
-import io.metaparticle.models.JobSpecification;
-import io.metaparticle.models.Service;
-import io.metaparticle.models.ServicePort;
-import io.metaparticle.models.ServeSpecification;
-import io.metaparticle.models.ServiceSpecification;
-import io.metaparticle.models.ShardSpecification;
+import static io.metaparticle.Util.handleErrorExec;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -20,8 +10,18 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.metaparticle.Util.addAll;
-import static io.metaparticle.Util.handleErrorExec;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import io.metaparticle.annotations.Runtime;
+import io.metaparticle.models.Container;
+import io.metaparticle.models.EnvVar;
+import io.metaparticle.models.JobSpecification;
+import io.metaparticle.models.ServeSpecification;
+import io.metaparticle.models.Service;
+import io.metaparticle.models.ServicePort;
+import io.metaparticle.models.ServiceSpecification;
+import io.metaparticle.models.ShardSpecification;
 
 public class MetaparticleExecutor implements Executor {
     Path specPath;

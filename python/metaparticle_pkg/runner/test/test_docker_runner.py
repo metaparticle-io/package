@@ -3,7 +3,7 @@
 
 
 import unittest
-from unittest.mock import patch, call, MagicMock
+from unittest.mock import patch, MagicMock
 from metaparticle_pkg.runner import docker_runner
 
 

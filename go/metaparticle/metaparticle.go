@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 	"os/signal"
-	"reflect"
 	"strings"
 )
 
@@ -82,11 +81,7 @@ func executorFromRuntime(r *Runtime) (Executor, error) {
 	case "docker":
 		return NewDockerImpl()
 	case "aci":
-		aciConfig, ok := r.ExtraConfig.(*AciRuntimeConfig)
-		if !ok {
-			return nil, fmt.Errorf("Extra config not of AciRuntimeConfig type: %v", reflect.TypeOf(r.ExtraConfig))
-		}
-		return &ACIExecutor{aciConfig}, nil
+		return NewACIExecutor()
 	case "metaparticle":
 		return &MetaparticleExecutor{}, nil
 	default:
@@ -107,17 +102,20 @@ func builderFromPackage(pkg *Package) (Builder, error) {
 }
 
 func writeDockerfile(name string) error {
-	contents := `FROM golang:1.9
+	contents := `FROM golang:1.9 as builder
 WORKDIR /go/src/app
 COPY . .
 
 RUN go get -u github.com/golang/dep/cmd/dep
-
 RUN dep init
-
 RUN go-wrapper install
 
-CMD ["go-wrapper", "run"]
+
+FROM ubuntu
+
+COPY --from=builder /go/bin/app .
+
+CMD ["./app"]
 `
 	return ioutil.WriteFile("Dockerfile", []byte(contents), 0644)
 }
@@ -160,7 +158,7 @@ func Containerize(r *Runtime, p *Package, f func()) {
 		if p.Publish {
 			err = builder.Push(image, os.Stdout, os.Stderr)
 			if err != nil {
-				panic(fmt.Sprintf("Could not push the image to the repository: %v", err))
+				panic(fmt.Sprintf("Could not push image \"%v\" to the repository: %v", image, err))
 			}
 		}
 
