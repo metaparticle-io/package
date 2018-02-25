@@ -39,6 +39,7 @@ class MetaparticleRunner:
             ]
             svc["serve"] = {
                 "name": name,
+                "public": options.public
             }
 
         if options.jobSpec is not None:

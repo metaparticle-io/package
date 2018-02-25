@@ -25,7 +25,7 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 @Containerize(
     package={'name': 'web', 'repository': 'docker.io/brendanburns'},
-    runtime={'ports': [8080], 'executor': 'metaparticle', 'replicas': 3}
+    runtime={'ports': [8080], 'executor': 'metaparticle', 'replicas': 3, 'public': True}
 )
 def main():
     Handler = MyHandler
