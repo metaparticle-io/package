@@ -1,7 +1,13 @@
 import setuptools
 import json
 
-config = json.loads('./metaparticle_pkg/version.json')
+from os import path
+
+base_path = path.abspath(path.dirname(__file__))
+version_json = path.join(base_path, 'metaparticle_pkg/version.json')
+
+with open(version_json) as f:
+    config = json.loads(f.read())
 
 setuptools.setup(
     name='metaparticle_pkg',

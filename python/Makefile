@@ -13,7 +13,7 @@ venv:
 	venv/bin/pip install -e .
 	venv/bin/pip install --upgrade tox
 
-publish: 
+publish:
 	python setup.py sdist upload -r pypi
 
 clean:
