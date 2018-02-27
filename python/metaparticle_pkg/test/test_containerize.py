@@ -1,10 +1,15 @@
 #!/usr/bin/env python
 '''Unit tests for containerize module'''
 
+import sys
 import unittest
-from unittest.mock import patch, mock_open, MagicMock
 from metaparticle_pkg import containerize
 from types import FunctionType
+
+if sys.version_info >= (3, 3):
+    from unittest.mock import patch, mock_open, MagicMock
+else:
+    from mock import patch, mock_open, MagicMock
 
 
 class ContainerizeTest(unittest.TestCase):

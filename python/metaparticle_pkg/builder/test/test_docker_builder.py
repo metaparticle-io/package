@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 '''Unit tests for DockerBuilder'''
 
-
+import sys
 import unittest
-from unittest.mock import patch
 from metaparticle_pkg.builder import docker_builder
+
+if sys.version_info >= (3, 3):
+    from unittest.mock import patch, mock_open, MagicMock
+else:
+    from mock import patch, mock_open, MagicMock
 
 
 class TestDockerBuilder(unittest.TestCase):

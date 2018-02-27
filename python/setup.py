@@ -21,7 +21,11 @@ setuptools.setup(
     include_package_data=False,
     zip_safe=False,
     install_requires=['docker==2.7.0'],
-    test_require=['pytest', 'flake8'],
+    test_require=[
+        'pytest',
+        'flake8',
+        'mock; python_version<"3.3"'
+    ],
     platforms='linux',
     keywords=['kubernetes', 'docker', 'container', 'metaparticle'],
     # latest from https://pypi.python.org/pypi?%3Aaction=list_classifiers
