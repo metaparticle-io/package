@@ -6,9 +6,9 @@ import sys
 from metaparticle_pkg.runner import docker_runner
 
 if sys.version_info >= (3, 3):
-    from unittest.mock import patch, mock_open, MagicMock
+    from unittest.mock import patch, MagicMock
 else:
-    from mock import patch, mock_open, MagicMock
+    from mock import patch, MagicMock
 
 
 class TestDockerRunner(unittest.TestCase):

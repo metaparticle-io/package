@@ -7,9 +7,9 @@ from metaparticle_pkg import option
 from sys import exit as real_exit
 
 if sys.version_info >= (3, 3):
-    from unittest.mock import patch, mock_open, MagicMock
+    from unittest.mock import patch, MagicMock
 else:
-    from mock import patch, mock_open, MagicMock
+    from mock import patch, MagicMock
 
 
 class TestOption(unittest.TestCase):
