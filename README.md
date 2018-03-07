@@ -73,8 +73,7 @@ func main(args []string) {
 }
 ```
 
-The net effect of this is that a developer can containerize, distribute and optionally deploy their application without ever leaving the syntax or confines of their development environment a
-nd language of choice.
+The net effect of this is that a developer can containerize, distribute and optionally deploy their application without ever leaving the syntax or confines of their development environment and language of choice.
 
 At the same time, metaparticle is not intended to be a platform. Under the hood, the libraries still
 write `Dockerfiles` and make calls to the same build and push code. So when a developer wants or needs
