@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using dockerfile;
+using Metaparticle.Tests;
 using static Metaparticle.Package.Util;
 using RuntimeConfig = Metaparticle.Runtime.Config;
+using TestConfig = Metaparticle.Tests.Config;
 
 namespace Metaparticle.Package
 {
@@ -13,11 +15,13 @@ namespace Metaparticle.Package
     {
         private Config config;
         private RuntimeConfig runtimeConfig;
+        private TestConfig testConfig;
 
-        public Driver(Config config, RuntimeConfig runtimeConfig)
+        public Driver(Config config, RuntimeConfig runtimeConfig, TestConfig testConfig)
         {
             this.config = config;
             this.runtimeConfig = runtimeConfig;
+            this.testConfig = testConfig;
         }
 
         private ImageBuilder getBuilder()
@@ -76,6 +80,8 @@ namespace Metaparticle.Package
             TextWriter e = config.Quiet ? Console.Error : null;
             if (procName == "dotnet")
             {
+                RunTests();
+
                 dir = "bin/release/netcoreapp2.0/debian.8-x64/publish";
                 Exec("dotnet", "publish -r debian.8-x64 -c release", stdout: o, stderr: e);
                 //var dirInfo = new UnixDirectoryInfo(dir);
@@ -138,6 +144,15 @@ namespace Metaparticle.Package
             exec.Logs(id, Console.Out, Console.Error);
         }
 
+        private void RunTests()
+        {
+            var runTestsResult = new DotnetTestRunner().Run(testConfig.Names);
+            if (runTestsResult == false)
+            {
+                throw new Exception("Tests Failed.");   
+            }
+        } 
+
         private string writeDockerfile(string dir, string exe, string[] args, Config config)
         {
             var dockerfilename = dir + "/Dockerfile";
@@ -188,6 +203,8 @@ namespace Metaparticle.Package
             }
             Config config = new Config();
             RuntimeConfig runtimeConfig = null;
+            TestConfig testConfig = null;
+
             var trace = new StackTrace();
             foreach (object attribute in trace.GetFrame(1).GetMethod().GetCustomAttributes(true))
             {
@@ -199,8 +216,12 @@ namespace Metaparticle.Package
                 {
                     runtimeConfig = (RuntimeConfig) attribute;
                 }
+                if (attribute is TestConfig)
+                {
+                    testConfig = (TestConfig) attribute;
+                }
             }
-            var mp = new Driver(config, runtimeConfig);
+            var mp = new Driver(config, runtimeConfig, testConfig);
             mp.Build(args);
         }
     }
