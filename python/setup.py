@@ -1,7 +1,13 @@
 import setuptools
 import json
 
-config = json.loads('./metaparticle_pkg/version.json')
+from os import path
+
+base_path = path.abspath(path.dirname(__file__))
+version_json = path.join(base_path, 'metaparticle_pkg/version.json')
+
+with open(version_json) as f:
+    config = json.loads(f.read())
 
 setuptools.setup(
     name='metaparticle_pkg',
@@ -15,7 +21,11 @@ setuptools.setup(
     include_package_data=False,
     zip_safe=False,
     install_requires=['docker==2.7.0'],
-    test_require=['pytest', 'flake8'],
+    test_require=[
+        'pytest',
+        'flake8',
+        'mock; python_version<"3.3"'
+    ],
     platforms='linux',
     keywords=['kubernetes', 'docker', 'container', 'metaparticle'],
     # latest from https://pypi.python.org/pypi?%3Aaction=list_classifiers

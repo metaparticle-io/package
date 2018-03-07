@@ -1,6 +1,12 @@
 import json
 import logging
 
+try:
+    from json import JSONDecodeError
+except ImportError:
+    JSONDecodeError = ValueError
+
+
 from docker import APIClient
 
 logger = logging.getLogger(__name__)
@@ -52,5 +58,5 @@ class DockerBuilder:
 
                 logger.debug(msg)
 
-        except json.JSONDecodeError:
+        except JSONDecodeError:
             logger.warning('JSON decode error: {}'.format(ln))

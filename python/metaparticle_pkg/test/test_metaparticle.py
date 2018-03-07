@@ -2,8 +2,13 @@
 '''Unit tests for MetaparticleRunner'''
 
 import unittest
-from unittest.mock import patch, MagicMock, mock_open
+import sys
 from metaparticle_pkg.runner import metaparticle
+
+if sys.version_info >= (3, 3):
+    from unittest.mock import patch, mock_open, MagicMock
+else:
+    from mock import patch, mock_open, MagicMock
 
 
 class TestMetaparticleRunner(unittest.TestCase):

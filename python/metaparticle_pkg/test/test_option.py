@@ -1,10 +1,15 @@
 #!/usr/bin/env python
 '''Unit tests for option module'''
 
-from sys import exit as real_exit
+import sys
 import unittest
-from unittest.mock import patch, MagicMock
 from metaparticle_pkg import option
+from sys import exit as real_exit
+
+if sys.version_info >= (3, 3):
+    from unittest.mock import patch, MagicMock
+else:
+    from mock import patch, MagicMock
 
 
 class TestOption(unittest.TestCase):
