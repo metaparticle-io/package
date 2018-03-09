@@ -4,7 +4,7 @@ using Metaparticle.Package;
 
 namespace Metaparticle.Package.Tests
 {
-    public class MetaparticleTests
+    public class ConfigTests
     {
         [Fact]
         public void Config_Loads_Environment_Variables()
