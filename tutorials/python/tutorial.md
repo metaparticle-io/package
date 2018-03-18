@@ -117,7 +117,7 @@ docker ps
 ## Step Two: Exposing the ports
 If you try to access the web server on [http://localhost:8080](http://localhost:8080) you
 will see that you can not actually access the server. Despite it running, the service
-is not exposed. To do this, you need to add am annotation to supply the
+is not exposed. To do this, you need to add an annotation to supply the
 port(s) to expose.
 
 The code snippet to add is:
