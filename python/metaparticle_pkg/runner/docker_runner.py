@@ -44,6 +44,8 @@ class DockerRunner:
         if self.docker_client is None:
             self.docker_client = APIClient(version='auto')
 
+        # seems like we are hitting bug
+        # https://github.com/docker/docker-py/issues/300
         log_stream = self.docker_client.logs(
             self.container.get('Id'),
             stream=True,
