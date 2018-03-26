@@ -2,7 +2,7 @@
     var fs = require('fs');
     var path = require('path');
 
-    inDockerContainer = () => {
+    const inDockerContainer = () => {
         switch (process.env.METAPARTICLE_IN_CONTAINER) {
             case 'true':
             case '1':
@@ -26,7 +26,7 @@
         return false;
     };
 
-    writeDockerfile = (options) => {
+    const writeDockerfile = (options) => {
         if (options.dockerfile) {
             fs.copyFileSync(options.dockerfile, 'Dockerfile');
             return;
@@ -43,7 +43,7 @@
         fs.writeFileSync('Dockerfile', dockerfile);
     };
 
-    selectBuilder = (buildSpec) => {
+    const selectBuilder = (buildSpec) => {
         switch (buildSpec) {
             case 'docker':
                 return require('./docker-builder');
@@ -52,7 +52,7 @@
         }
     }
 
-    selectRunner = (execSpec) => {
+    const selectRunner = (execSpec) => {
         switch (execSpec) {
             case 'docker':
                 return require('./docker-runner');
