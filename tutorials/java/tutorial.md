@@ -312,4 +312,97 @@ $ kubectl get services
 ...
 ```
 
+### Spring Boot Apps
+
+Containerizing Spring Boot applications is just as straightforward. Say you've created a new Boot project using either 
+the [Spring Initialzr](https://start.spring.io) site or else your IDE's tooling and you selected the web starter. 
+Add the Metaparticle package dependency as shown below. Note that the Spring Boot Maven plugin will have also been
+automatically added to the build file when it was generated.  
+
+```xml
+...
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.0.0.RELEASE</version>
+        <relativePath/>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.metaparticle</groupId>
+            <artifactId>metaparticle-package</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+...	
+```
+
+The complete code for a simple application that's ready to be replicated and exposed
+on the web might look something like below:
+
+```java
+package io.metaparticle.tutorial.bootdemo;
+
+import io.metaparticle.annotations.Package;
+import io.metaparticle.annotations.Runtime;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import static io.metaparticle.Metaparticle.Containerize;
+
+@SpringBootApplication
+public class BootDemoApplication {
+
+    @Runtime(ports = {8080},
+            replicas = 4,
+            executor = "metaparticle")
+    @Package(repository = "your-docker-user-goes-here",
+            jarFile = "target/boot-demo-0.0.1-SNAPSHOT.jar",
+            publish = true,
+            verbose = true)
+    public static void main(String[] args) {
+        Containerize(() -> SpringApplication.run(BootDemoApplication.class, args));
+    }
+}
+
+@RestController
+class HelloController {
+
+    @GetMapping("/")
+    public String hello(HttpServletRequest request) {
+        System.out.printf("[%s]%n", request.getRequestURL());
+        return String.format("Hello containers [%s] from %s",
+                request.getRequestURL(), System.getenv("HOSTNAME"));
+    }
+}
+```
+
+To run the application you could either make use of that Spring Boot Maven plugin mentioned earlier 
+with the command `mvn clean spring-boot:run`. Alternatively, using `mvn clean package` to create an executable
+Spring Boot Jar and then running that with `java -jar` will also work. 
+
 Still looking for more? Continue on to the more advanced [sharding tutorial](sharding-tutorial.md)
