@@ -7,9 +7,12 @@ logger = logging.getLogger(__name__)
 
 class DockerRunner:
     def __init__(self):
-        self.docker_client = APIClient(version='auto')
+        self.docker_client = None
 
     def run(self, img, name, options):
+        if self.docker_client is None:
+            self.docker_client = APIClient(version='auto')
+
         ports = []
         host_config = None
 
@@ -36,6 +39,9 @@ class DockerRunner:
         logger.info('Starting container {}'.format(container))
 
     def logs(self, *args, **kwargs):
+        if self.docker_client is None:
+            self.docker_client = APIClient(version='auto')
+
         # seems like we are hitting bug
         # https://github.com/docker/docker-py/issues/300
         log_stream = self.docker_client.logs(
@@ -48,5 +54,7 @@ class DockerRunner:
             logger.info(line)
 
     def cancel(self, name):
+        if self.docker_client is None:
+            self.docker_client = APIClient(version='auto')
         self.docker_client.kill(self.container.get('Id'))
         self.docker_client.remove_container(self.container.get('Id'))
