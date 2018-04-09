@@ -20,9 +20,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	metaparticle.Containerize(
 		&metaparticle.Runtime{
-			Ports:    []int32{port},
-			Executor: "metaparticle",
-			Shards: 3,
+			Ports:           []int32{port},
+			Executor:        "metaparticle",
+			Shards:          3,
 			URLShardPattern: "^\\/users\\/([^\\/]*)\\/.*",
 		},
 		&metaparticle.Package{
@@ -33,7 +33,7 @@ func main() {
 			Publish:    true,
 		},
 		func() {
-			log.Printf("Starting server on :%d\n" port)
+			log.Printf("Starting server on :%d\n", port)
 			http.HandleFunc("/", handler)
 			err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 			if err != nil {
