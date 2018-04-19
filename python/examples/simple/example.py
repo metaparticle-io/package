@@ -1,34 +1,29 @@
+#!/usr/bin/python
 from metaparticle_pkg import Containerize
+
 import time
+import logging
 
-package_repo = 'repo'
-package_name = 'something'
-sleep_time = 10
-
-
-@Containerize(
-    package={'name': package_name, 'repository': package_repo},
-    runtime={'ports': [80, 8080]}
-)
-def container_with_port():
-    print('hello container_with_port')
-
-    for i in range(sleep_time):
-        print('Sleeping ... {} sec'.format(i))
-        time.sleep(1)
+# all metaparticle output is accessible through the stdlib logger (debug level)
+logging.basicConfig(level=logging.INFO)
+logging.getLogger('metaparticle_pkg.runner').setLevel(logging.DEBUG)
+logging.getLogger('metaparticle_pkg.builder').setLevel(logging.DEBUG)
 
 
 @Containerize(
-    package={'name': package_name, 'repository': package_repo, 'publish': True}
+    package={
+        'name': 'simple',
+        'repository': 'docker.io/brendanburns',
+        'publish': False
+    }
 )
-def hihi():
+def main():
     print('hello world!')
 
-    for i in range(sleep_time):
+    for i in range(5):
         print('Sleeping ... {} sec'.format(i))
         time.sleep(1)
 
 
 if __name__ == '__main__':
-    hihi()
-    container_with_port()
+    main()

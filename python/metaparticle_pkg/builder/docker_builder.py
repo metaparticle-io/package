@@ -3,7 +3,7 @@ import logging
 
 from docker import APIClient
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('.'.join(__name__.split('.')[:-1]))
 
 
 class DockerBuilder:
