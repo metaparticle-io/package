@@ -1,3 +1,3 @@
-from metaparticle_pkg.containerize import Containerize
+from metaparticle_pkg.containerize import Containerize, PackageFile
 
-__all__ = [Containerize]
+__all__ = ['Containerize', 'PackageFile']
