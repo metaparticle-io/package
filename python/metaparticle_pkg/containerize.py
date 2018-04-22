@@ -100,5 +100,5 @@ class PackageFile(object):
     def render(self):
         ret = "COPY {src} {dest}".format(src=self.src, dest=self.dest)
         if self.mode:
-            ret += "\nRUN chmod {mode} {dest}".format(mode=self.mode, dest=self.dest)
+            ret += "\nRUN chmod -R {mode} {dest}".format(mode=self.mode, dest=self.dest)
         return ret
