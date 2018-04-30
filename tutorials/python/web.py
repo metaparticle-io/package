@@ -14,7 +14,7 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.send_header("Content-type", "text/plain")
         self.end_headers()
         self.wfile.write("Hello Metparticle [{}] @ {}\n".format(self.path, socket.gethostname()).encode('UTF-8'))
-        print("request for {}".format(self.path))
+        print(("request for {}".format(self.path)))
 
     def do_HEAD(self):
         self.send_response(OK)

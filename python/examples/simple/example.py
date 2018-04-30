@@ -21,7 +21,7 @@ def main():
     print('hello world!')
 
     for i in range(5):
-        print('Sleeping ... {} sec'.format(i))
+        print(('Sleeping ... {} sec'.format(i)))
         time.sleep(1)
 
 
