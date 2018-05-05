@@ -3,6 +3,7 @@ import logging
 
 from docker import APIClient
 
+# use a generic logger name: metaparticle_pkg.builder
 logger = logging.getLogger('.'.join(__name__.split('.')[:-1]))
 
 

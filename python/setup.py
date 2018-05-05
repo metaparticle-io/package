@@ -1,7 +1,8 @@
 import setuptools
 import json
 
-config = json.load(open('./metaparticle_pkg/version.json', 'r'))
+with open('./metaparticle_pkg/version.json', 'r') as json_file:
+    config = json.load(json_file)
 
 setuptools.setup(
     name='metaparticle_pkg',
