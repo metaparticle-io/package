@@ -5,7 +5,7 @@ import os
 
 def load(cls, options):
     if not isinstance(options, dict):
-        sys.stderr.write("Must provide an options dict.")
+        sys.stderr.write("Must provide an options dictionary. Given option: %s" % repr(options))
         sys.exit(1)
     for option in cls.required_options:
         if option not in options:
@@ -22,6 +22,10 @@ class RuntimeOptions(namedtuple('Runtime', 'executor replicas ports public shard
     required_options = []
 
     def __new__(cls, executor='docker', replicas=0, ports=[], public=False, shardSpec=None, jobSpec=None):
+        if shardSpec:
+            shardSpec = load(ShardSpec, shardSpec)
+        if jobSpec:
+            jobSpec = load(JobSpec, jobSpec)
         return super(RuntimeOptions, cls).__new__(cls, executor, replicas, ports, public, shardSpec, jobSpec)
 
 
