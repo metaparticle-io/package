@@ -1,4 +1,6 @@
 #!/usr/bin/python
+from __future__ import absolute_import
+from __future__ import print_function
 from metaparticle_pkg import Containerize
 
 import logging

@@ -2,6 +2,7 @@
 '''Unit tests for DockerRunner'''
 
 
+from __future__ import absolute_import
 import unittest
 from unittest.mock import patch, MagicMock
 from metaparticle_pkg.runner import docker_runner
