@@ -141,12 +141,47 @@ class ContainerizeTest(unittest.TestCase):
         # Input parameters
         package = MagicMock()
         package.dockerfile = None
+        package.py_version = "3.7"
         exec_file = '/some/fake_exec_file_path'
 
         with patch("metaparticle_pkg.containerize.open",
                    mocked_open_function) as mocked_open:
             containerize.write_dockerfile(package, exec_file)
-            self.assertEqual(mocked_open().write.call_count, 1)
+            mocked_open().write.assert_called_once_with("""\
+FROM python:3.7-alpine
+COPY ./ /app/
+
+RUN pip install --no-cache -r /app/requirements.txt
+CMD python -u /app//some/fake_exec_file_path
+""")
+
+    def test_write_dockerfile_with_additional_files(self):
+        '''Test write_dockerfile method in case of Dockerfile is absent'''
+
+        mocked_open_function = mock_open()
+
+        # Input parameters
+        package = MagicMock()
+        package.dockerfile = None
+        package.py_version = "3.7"
+        package.additionalFiles = [
+            containerize.PackageFile(src='/from/somewhere', dest='/to/somewhere'),
+            containerize.PackageFile(src='/from/somewhere/else', dest='/to/somewhere/else', mode=754)
+        ]
+        exec_file = '/some/fake_exec_file_path'
+
+        with patch("metaparticle_pkg.containerize.open",
+                   mocked_open_function) as mocked_open:
+            containerize.write_dockerfile(package, exec_file)
+            mocked_open().write.assert_called_once_with("""\
+FROM python:3.7-alpine
+COPY ./ /app/
+COPY /from/somewhere /to/somewhere
+COPY /from/somewhere/else /to/somewhere/else
+RUN chmod -R 754 /to/somewhere/else
+RUN pip install --no-cache -r /app/requirements.txt
+CMD python -u /app//some/fake_exec_file_path
+""")
 
     @patch("metaparticle_pkg.containerize.os")
     @patch("metaparticle_pkg.containerize.builder")
@@ -197,6 +232,22 @@ class ContainerizeTest(unittest.TestCase):
         self.assertEqual(mocked_runner.select().run.call_count, 1)
         self.assertEqual(mocked_runner.select().logs.call_count, 1)
         self.assertEqual(mocked_builder.select().build.call_count, 1)
+
+    def test_packagefile_render(self):
+        '''Test packagefile.render method go case'''
+
+        package_file = containerize.PackageFile(src='thesrc', dest='thedst')
+        actual_value = package_file.render()
+
+        self.assertEqual(actual_value, "COPY thesrc thedst")
+
+    def test_packagefile_render_mode(self):
+        '''Test packagefile.render method with a mode'''
+
+        package_file = containerize.PackageFile(src='thesrc', dest='thedst', mode=444)
+        actual_value = package_file.render()
+
+        self.assertEqual(actual_value, "COPY thesrc thedst\nRUN chmod -R 444 thedst")
 
 
 if __name__ == '__main__':

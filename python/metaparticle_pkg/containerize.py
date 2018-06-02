@@ -39,11 +39,9 @@ def write_dockerfile(package, exec_file):
 
     with open('Dockerfile', 'w+t') as f:
         f.write("""FROM python:{version}-alpine
-
 COPY ./ /app/
 {copy_files}
 RUN pip install --no-cache -r /app/requirements.txt
-
 CMD python -u /app/{exec_file}
 """.format(version=package.py_version,
            exec_file=exec_file,

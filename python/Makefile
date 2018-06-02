@@ -11,6 +11,7 @@ venv:
 	venv/bin/pip install --upgrade pip
 	venv/bin/pip install --upgrade setuptools
 	. venv/bin/activate
+	venv/bin/pip install -r requirements.txt
 	venv/bin/pip install -e .
 
 publish: 
