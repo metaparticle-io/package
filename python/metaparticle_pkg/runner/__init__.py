@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from metaparticle_pkg.runner.docker_runner import DockerRunner
 from metaparticle_pkg.runner.metaparticle import MetaparticleRunner
 

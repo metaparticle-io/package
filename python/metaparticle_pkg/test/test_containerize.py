@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 '''Unit tests for containerize module'''
 
+from __future__ import absolute_import
 import unittest
 from unittest.mock import patch, mock_open, MagicMock
 from metaparticle_pkg import containerize

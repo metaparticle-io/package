@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 '''Unit tests for option module'''
 
+from __future__ import absolute_import
 from sys import exit as real_exit
 import unittest
 from unittest.mock import patch, MagicMock
