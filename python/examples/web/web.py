@@ -1,4 +1,6 @@
 #!/usr/bin/python
+from __future__ import absolute_import
+from __future__ import print_function
 from metaparticle_pkg import Containerize
 
 import logging
@@ -21,7 +23,7 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.send_header("Content-type", "text/plain")
         self.end_headers()
         self.wfile.write("Hello Metaparticle [{}] @ {}\n".format(self.path, socket.gethostname()).encode('UTF-8'))
-        print("request for {}".format(self.path))
+        print(("request for {}".format(self.path)))
 
     def do_HEAD(self):
         self.send_response(OK)
