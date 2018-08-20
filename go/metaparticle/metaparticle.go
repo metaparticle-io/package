@@ -111,7 +111,7 @@ RUN dep init
 RUN go-wrapper install
 
 
-FROM ubuntu
+FROM alpine
 
 COPY --from=builder /go/bin/app .
 
