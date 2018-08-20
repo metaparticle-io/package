@@ -106,7 +106,8 @@ func writeDockerfile(name string) error {
 WORKDIR /go/src/app
 COPY . .
 
-RUN go get -u github.com/golang/dep/cmd/dep && dep init && go-wrapper install
+RUN go get -u github.com/golang/dep/cmd/dep && dep init && go-wrapper install \
+	apk add --no-cache ca-certificates && update-ca-certificates
 
 
 FROM alpine
