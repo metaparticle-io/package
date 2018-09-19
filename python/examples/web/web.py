@@ -1,11 +1,19 @@
 #!/usr/bin/python
+from __future__ import absolute_import
+from __future__ import print_function
+from metaparticle_pkg import Containerize
 
-from six.moves import SimpleHTTPServer, socketserver
+import logging
 import socket
-from metaparticle_pkg.containerize import Containerize
+from six.moves import SimpleHTTPServer, socketserver
+
+# all metaparticle output is accessible through the stdlib logger (debug level)
+logging.basicConfig(level=logging.INFO)
+logging.getLogger('metaparticle_pkg.runner').setLevel(logging.DEBUG)
+logging.getLogger('metaparticle_pkg.builder').setLevel(logging.DEBUG)
+
 
 OK = 200
-
 port = 8080
 
 
@@ -15,7 +23,7 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.send_header("Content-type", "text/plain")
         self.end_headers()
         self.wfile.write("Hello Metaparticle [{}] @ {}\n".format(self.path, socket.gethostname()).encode('UTF-8'))
-        print("request for {}".format(self.path))
+        print(("request for {}".format(self.path)))
 
     def do_HEAD(self):
         self.send_response(OK)
@@ -24,8 +32,17 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 
 @Containerize(
-    package={'name': 'web', 'repository': 'docker.io/brendanburns'},
-    runtime={'ports': [8080], 'executor': 'metaparticle', 'replicas': 3, 'public': True}
+    package={
+        # to run this example you'll need to change these values
+        'name': 'web',
+        'repository': 'docker.io/brendanburns',
+    },
+    runtime={
+        'ports': [8080],
+        'executor': 'metaparticle',
+        'replicas': 3,
+        'public': True
+    }
 )
 def main():
     Handler = MyHandler

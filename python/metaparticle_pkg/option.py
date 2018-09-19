@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from collections import namedtuple
 import sys
 import os
@@ -5,7 +6,7 @@ import os
 
 def load(cls, options):
     if not isinstance(options, dict):
-        sys.stderr.write("Must provide an options dict.")
+        sys.stderr.write("Must provide an options dictionary. Given option: %s" % repr(options))
         sys.exit(1)
     for option in cls.required_options:
         if option not in options:
@@ -22,6 +23,10 @@ class RuntimeOptions(namedtuple('Runtime', 'executor replicas ports public shard
     required_options = []
 
     def __new__(cls, executor='docker', replicas=0, ports=[], public=False, shardSpec=None, jobSpec=None):
+        if shardSpec:
+            shardSpec = load(ShardSpec, shardSpec)
+        if jobSpec:
+            jobSpec = load(JobSpec, jobSpec)
         return super(RuntimeOptions, cls).__new__(cls, executor, replicas, ports, public, shardSpec, jobSpec)
 
 
@@ -39,9 +44,9 @@ class JobSpec(namedtuple('JobSpec', 'iterations')):
         return super(JobSpec, cls).__new__(cls, iterations)
 
 
-class PackageOptions(namedtuple('Package', 'repository name builder publish verbose quiet py_version')):
+class PackageOptions(namedtuple('Package', 'repository name builder publish py_version additionalFiles')):
     required_options = ['repository']
 
-    def __new__(cls, repository, name, builder='docker', publish=False, verbose=True, quiet=False, py_version=3, dockerfile=None):
+    def __new__(cls, repository, name, builder='docker', publish=False, py_version=3, dockerfile=None, additionalFiles=tuple()):
         name = name if name else os.path.basename(os.getcwd())
-        return super(PackageOptions, cls).__new__(cls, repository, name, builder, publish, verbose, quiet, py_version)
+        return super(PackageOptions, cls).__new__(cls, repository, name, builder, publish, py_version, additionalFiles)

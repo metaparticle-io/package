@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import os
 import shutil
 import signal
@@ -35,14 +36,17 @@ def write_dockerfile(package, exec_file):
         shutil.copy(package.dockerfile, 'Dockerfile')
         return
 
+    copy_files = "\n".join([addFile.render() for addFile in package.additionalFiles])
+
     with open('Dockerfile', 'w+t') as f:
         f.write("""FROM python:{version}-alpine
-
 COPY ./ /app/
+{copy_files}
 RUN pip install --no-cache -r /app/requirements.txt
-
-CMD python /app/{exec_file}
-""".format(version=package.py_version, exec_file=exec_file))
+CMD python -u /app/{exec_file}
+""".format(version=package.py_version,
+           exec_file=exec_file,
+           copy_files=copy_files))
 
 
 class Containerize(object):
@@ -83,3 +87,17 @@ class Containerize(object):
 
             return self.runner.logs(self.package.name)
         return wrapped
+
+
+class PackageFile(object):
+
+    def __init__(self, src, dest, mode=None):
+        self.src = src
+        self.dest = dest
+        self.mode = mode
+
+    def render(self):
+        ret = "COPY {src} {dest}".format(src=self.src, dest=self.dest)
+        if self.mode:
+            ret += "\nRUN chmod -R {mode} {dest}".format(mode=self.mode, dest=self.dest)
+        return ret

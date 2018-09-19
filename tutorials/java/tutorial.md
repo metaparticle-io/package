@@ -118,8 +118,8 @@ import com.sun.net.httpserver.HttpServer;
 public class Main {
     private static final int port = 8080;
 
-    @Package(repository="docker.io/your-docker-user-goes-here",
-             jarFile="target/metaparticle-package-tutorial-0.1-SNAPSHOT-jar-with-dependencies.jar")
+    @Package(repository = "your-docker-user-goes-here",
+             jarFile = "target/metaparticle-package-tutorial-0.1-SNAPSHOT-jar-with-dependencies.jar")
     public static void main(String[] args) {
         Containerize(() -> {
             try {
@@ -146,7 +146,7 @@ public class Main {
 
 You will notice that we added a `@Package` annotation that describes how
 to package the application. You will need to replace `your-docker-user-goes-here`
-with an actual Docker repository path.
+with an actual Docker Hub user name.
 
 You will also notice that we wrapped the main function in the `Containerize`
 function which kicks off the Metaparticle code.
@@ -203,8 +203,8 @@ public class Main {
     private static final int port = 8080;
 
     @Runtime(ports={port})        
-    @Package(repository="docker.io/your-docker-user-goes-here",
-             jarFile="target/metaparticle-package-tutorial-0.1-SNAPSHOT-jar-with-dependencies.jar")
+    @Package(repository = "your-docker-user-goes-here",
+             jarFile = "target/metaparticle-package-tutorial-0.1-SNAPSHOT-jar-with-dependencies.jar")
     public static void main(String[] args) {
         Containerize(() -> {
             try {
@@ -233,10 +233,10 @@ Now if you run this with `mvn compile exec:java -Dexec.mainClass=io.metaparticle
 
 ## Replicating and exposing on the web.
 As a final step, consider the task of exposing a replicated service on the internet.
-To do this, we're going to expand our usage of the `@Runtime` tag. First we will
-add a `replicas` field, which will specify the number of replicas. Second we will
-set our execution environment to `metaparticle` which will launch the service
-into the currently configured Kubernetes environment.
+To do this, we're going to expand our usage of the `@Runtime` and `@Package` annotations.
+First, `@Package` has its `publish` field added with a value of `true`. This is necessary in order to push the built image to the Docker repository.
+Next, we add a `executor` field to the `@Runtime` annotation to set our execution environment to `metaparticle` which will launch the service
+into the currently configured Kubernetes environment. Finally, we add a `replicas` field to the `@Runtime` annotation. This specifies the number of replicas to schedule.
 
 Here's what the snippet looks like:
 
@@ -244,8 +244,11 @@ Here's what the snippet looks like:
 ...
     @Runtime(ports={port},
              replicas = 4,
-             publicAddress = true,
-             executor="metaparticle")
+             executor = "metaparticle")
+    @Package(repository = "your-docker-user-goes-here",
+            jarFile = "target/metaparticle-package-tutorial-0.1-SNAPSHOT-jar-with-dependencies.jar",
+            publish = true,
+            verbose = true)           
 ...
 ```
 
@@ -270,10 +273,11 @@ public class Main {
 
     @Runtime(ports={port},
              replicas=4,
-             publicAddress=true,
              executor="metaparticle")    
-    @Package(repository="docker.io/your-docker-user-goes-here",
-             jarFile="target/metaparticle-package-tutorial-0.1-SNAPSHOT-jar-with-dependencies.jar")
+    @Package(repository = "your-docker-user-goes-here",
+            jarFile = "target/metaparticle-package-tutorial-0.1-SNAPSHOT-jar-with-dependencies.jar",
+            publish = true,
+            verbose = true)           
     public static void main(String[] args) {
         Containerize(() -> {
             try {
@@ -298,8 +302,8 @@ public class Main {
 }
 ```
 
-After you compile and run this, you can see that there are four replicas running behind a
-Kubernetes Service Load balancer:
+After you compile and run this, you can see that there are four pod replicas running behind a
+Kubernetes ClusterIP service:
 
 ```sh
 $ kubectl get pods
@@ -307,5 +311,98 @@ $ kubectl get pods
 $ kubectl get services
 ...
 ```
+
+### Spring Boot Apps
+
+Containerizing Spring Boot applications is just as straightforward. Say you've created a new Boot project using either 
+the [Spring Initialzr](https://start.spring.io) site or else your IDE's tooling and you selected the web starter. 
+Add the Metaparticle package dependency as shown below. Note that the Spring Boot Maven plugin will have also been
+automatically added to the build file when it was generated.  
+
+```xml
+...
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.0.0.RELEASE</version>
+        <relativePath/>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.metaparticle</groupId>
+            <artifactId>metaparticle-package</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+...	
+```
+
+The complete code for a simple application that's ready to be replicated and exposed
+on the web might look something like below:
+
+```java
+package io.metaparticle.tutorial.bootdemo;
+
+import io.metaparticle.annotations.Package;
+import io.metaparticle.annotations.Runtime;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import static io.metaparticle.Metaparticle.Containerize;
+
+@SpringBootApplication
+public class BootDemoApplication {
+
+    @Runtime(ports = {8080},
+            replicas = 4,
+            executor = "metaparticle")
+    @Package(repository = "your-docker-user-goes-here",
+            jarFile = "target/boot-demo-0.0.1-SNAPSHOT.jar",
+            publish = true,
+            verbose = true)
+    public static void main(String[] args) {
+        Containerize(() -> SpringApplication.run(BootDemoApplication.class, args));
+    }
+}
+
+@RestController
+class HelloController {
+
+    @GetMapping("/")
+    public String hello(HttpServletRequest request) {
+        System.out.printf("[%s]%n", request.getRequestURL());
+        return String.format("Hello containers [%s] from %s",
+                request.getRequestURL(), System.getenv("HOSTNAME"));
+    }
+}
+```
+
+To run the application you could either make use of that Spring Boot Maven plugin mentioned earlier 
+with the command `mvn clean spring-boot:run`. Alternatively, using `mvn clean package` to create an executable
+Spring Boot Jar and then running that with `java -jar` will also work. 
 
 Still looking for more? Continue on to the more advanced [sharding tutorial](sharding-tutorial.md)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 '''Unit tests for MetaparticleRunner'''
 
+from __future__ import absolute_import
 import unittest
 from unittest.mock import patch, MagicMock, mock_open
 from metaparticle_pkg.runner import metaparticle

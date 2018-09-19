@@ -33,7 +33,7 @@ A diagram of the shard architecture is below
 Typically a shard deployment would consist of two different application containers (the router and the shard), two different deployment configurations and two services to connect pieces together. That's a lot of YAML and a lot of complexity for an enduser to
 absorb to implement a fairly straightforward concept.
 
-To show how Metaparticle/Sharding can help dramatically simplify this, here is the corresponding code in Java:
+To show how Metaparticle/Sharding can help dramatically simplify this, here is the corresponding code in Java (where `your-docker-user-goes-here` needs to be replaced with a Docker Hub user name):
 
 ```java
 package io.metaparticle.examples.web;
@@ -58,9 +58,10 @@ public class Main {
              shards = 4,
              urlShardPattern = "^\\/users\\/([^\\/]*)\\/.*",
              executor="metaparticle")
-    @Package(repository="brendanburns",
+    @Package(repository="your-docker-user-goes-here",
              verbose=true,
-             jarFile="target/metaparticle-package-0.1-SNAPSHOT-jar-with-dependencies.jar")
+             publish = true,
+             jarFile="target/metaparticle-package-tutorial-0.1-SNAPSHOT-jar-with-dependencies.jar")
     public static void main(String[] args) {
         Containerize(() -> {
             try {

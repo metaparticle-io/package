@@ -2,6 +2,7 @@
 '''Unit tests for DockerRunner'''
 
 
+from __future__ import absolute_import
 import unittest
 from unittest.mock import patch, MagicMock
 from metaparticle_pkg.runner import docker_runner
@@ -30,6 +31,11 @@ class TestDockerRunner(unittest.TestCase):
         options = MagicMock()
         options.ports = [port]
 
+        result = {'id': 'foo'}
+        mocked_container = MagicMock()
+        mocked_container.get = MagicMock(return_value=result)
+        mocked_create.return_value = mocked_container
+
         # Expected argument called with
         self.runner.run(img, name, options)
 
@@ -50,7 +56,11 @@ class TestDockerRunner(unittest.TestCase):
             ports=[port]
         )
 
-        mocked_start.assert_called_once()
+        mocked_container.get.assert_called_once_with('Id')
+
+        mocked_start.assert_called_with(
+            container=result
+        )
 
     @patch('metaparticle_pkg.runner.docker_runner.APIClient.logs')
     def test_logs(self, mocked_logs):

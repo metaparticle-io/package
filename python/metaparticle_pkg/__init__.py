@@ -1,3 +1,4 @@
-from metaparticle_pkg.containerize import Containerize
+from __future__ import absolute_import
+from metaparticle_pkg.containerize import Containerize, PackageFile
 
-__all__ = [Containerize]
+__all__ = ['Containerize', 'PackageFile']

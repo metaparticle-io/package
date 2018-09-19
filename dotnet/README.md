@@ -56,5 +56,19 @@ set METAPARTICLE_CONFIG_REPOSITORY=docker.io/myrepo/myimagename:sometag
 
 This will set the `Repository` property that you would otherwise set in the attributes. See `Config.cs` for supported environment variable overrides.
 
+### Tests
+If you wish to add some test project to your metaparticle that get run as part of the build pipeline, you can add the tests projects (relative paths) to the `Tests.Config` attribute above `Main`, where you declare the runtime config.
+
+```
+[Metaparticle.Tests.Config(Names = new[] {"../my-test-folder1/", "../my-test-folder2/tests"})]
+```
+
+Sample project `simple-web` uses the test project `simple-test`. You can run the example to see it in action.
+
+```
+cd examples/simple
+dotnet run
+```
+
 ## Tutorial
 For a more complete exploration of the Metaparticle/Package for .NET Core, please see the [in-depth tutorial](../tutorials/dotnet/tutorial.md).

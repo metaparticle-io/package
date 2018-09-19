@@ -1,25 +1,33 @@
-package io.metaparticle.test;
+package io.metaparticle;
 
-import static io.metaparticle.Metaparticle.Containerize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import io.metaparticle.annotations.Package;
+import io.metaparticle.annotations.Runtime;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.metaparticle.AciExecutor;
-import io.metaparticle.DockerImpl;
-import io.metaparticle.Metaparticle;
-import io.metaparticle.MetaparticleExecutor;
-import io.metaparticle.annotations.Package;
-import io.metaparticle.annotations.Runtime;
+import static io.metaparticle.Metaparticle.Containerize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Util.class})
 public class MetaparticleTest {
+
+	@After
+	public void tearDown() throws IOException {
+		Files.deleteIfExists(Paths.get("Dockerfile"));
+	}
 
 	@Test
 	public void inDockerContainerTest() {
@@ -81,6 +89,58 @@ public class MetaparticleTest {
 		Package packageAnnotation = method.getAnnotation(Package.class);
 		assertEquals(DockerImpl.class.getName(), Metaparticle.getBuilder(null).getClass().getName());
 		assertEquals(DockerImpl.class.getName(), Metaparticle.getBuilder(packageAnnotation).getClass().getName());
+	}
+
+	@Test
+	public void dockerFileCommandSetForSpringBootApplication() throws IOException {
+		Package mockPackage = mock(Package.class);
+		when(mockPackage.dockerfile()).thenReturn("");
+		when(mockPackage.jarFile()).thenReturn("target/foo.jar");
+		Metaparticle.writeDockerfile("foo.Bar", mockPackage, true);
+
+		String dockerfileAsString = new String(Files.readAllBytes(Paths.get("Dockerfile")));
+		assertTrue(dockerfileAsString.endsWith("\nCMD java -jar /main.jar"));
+	}
+
+	@Test
+	public void dockerFileCommandSetWithDefaultCommand() throws IOException {
+		Package mockPackage = mock(Package.class);
+		when(mockPackage.dockerfile()).thenReturn("");
+		when(mockPackage.jarFile()).thenReturn("target/foo.jar");
+		Metaparticle.writeDockerfile("foo.Bar", mockPackage, false);
+
+		String dockerfileAsString = new String(Files.readAllBytes(Paths.get("Dockerfile")));
+		assertTrue(dockerfileAsString.endsWith("\nCMD java -classpath /main.jar foo.Bar"));
+	}
+
+	@Test
+	public void packageStepSkippedWhenRunningInSpringBootAppAndTargetAlreadyExists() {
+		PowerMockito.mockStatic(Util.class);
+
+		Metaparticle.doPackage(true, true);
+
+		PowerMockito.verifyStatic(Util.class, Mockito.never());
+		Util.handleErrorExec(new String[]{"mvn", "package"}, System.out, System.err);
+	}
+
+	@Test
+	public void packageStepOccursWhenNotRunningInSpringBootAppAndTargetAlreadyExists() {
+		PowerMockito.mockStatic(Util.class);
+
+		Metaparticle.doPackage(false, true);
+
+		PowerMockito.verifyStatic(Util.class);
+		Util.handleErrorExec(new String[]{"mvn", "package"}, System.out, System.err);
+	}
+
+	@Test
+	public void packageStepOccursWhenNotRunningInSpringBootAppAndTargetDoesNotExist() {
+		PowerMockito.mockStatic(Util.class);
+
+		Metaparticle.doPackage(false, false);
+
+		PowerMockito.verifyStatic(Util.class);
+		Util.handleErrorExec(new String[]{"mvn", "package"}, System.out, System.err);
 	}
 
 	@Test
