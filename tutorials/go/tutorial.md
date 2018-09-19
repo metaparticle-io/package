@@ -88,6 +88,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	metaparticle.Containerize(
+		&metaparticle.Runtime{
+			Ports:    []int32{port},
+			Executor: "docker",
+		},
 		&metaparticle.Package{
 			Name:       "metaparticle-web-demo",
 			Repository: "your-docker-user-goes-here",
