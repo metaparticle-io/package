@@ -50,6 +50,6 @@ cd package/python
 make venv
 source venv/bin/activate
 
-cd examples
+cd examples/simple
 python example.py
 ```
